@@ -138,4 +138,172 @@ theorem sqfreeAux_isqrt_iff {b : ℕ} (hb : b ≠ 0) (hb64 : b < 2 ^ 64) :
       exact absurd ((mul_dvd_mul hpd hpd).trans (Nat.dvd_of_mod_eq_zero hmod))
         (h p hp)
 
+/-- Stream membership: `genOddRangeAux` produces exactly the odd-indexed
+squares `(2(kLo+i)+1)^2 * b3` for `i < cnt`, on top of the accumulator. -/
+theorem mem_genOddRangeAux (b3 kLo : Nat) : ∀ (cnt : Nat) (acc : List Nat)
+    (v : Nat), v ∈ genOddRangeAux b3 kLo cnt acc ↔
+      (∃ i, i < cnt ∧ v = (2 * (kLo + i) + 1) * (2 * (kLo + i) + 1) * b3) ∨
+        v ∈ acc := by
+  intro cnt
+  induction cnt with
+  | zero =>
+    intro acc v
+    simp only [genOddRangeAux]
+    constructor
+    · intro h
+      exact Or.inr h
+    · rintro (⟨i, hi, -⟩ | h)
+      · omega
+      · exact h
+  | succ c ih =>
+    intro acc v
+    rw [genOddRangeAux, ih]
+    simp only [List.mem_cons]
+    constructor
+    · rintro (⟨i, hi, hv⟩ | hv | hv)
+      · exact Or.inl ⟨i, by omega, hv⟩
+      · exact Or.inl ⟨c, by omega, hv⟩
+      · exact Or.inr hv
+    · rintro (⟨i, hi, hv⟩ | hv)
+      · rcases Nat.lt_or_ge i c with hic | hic
+        · exact Or.inl ⟨i, hic, hv⟩
+        · have : i = c := by omega
+          subst this
+          exact Or.inr (Or.inl hv)
+      · exact Or.inr (Or.inr hv)
+
+/-- Anything already accumulated survives the outer loop. -/
+theorem outerRangeAux_acc_mono (lo hi : Nat) : ∀ (kb : Nat)
+    (acc : List (List Nat)) (l : List Nat), l ∈ acc →
+    l ∈ outerRangeAux lo hi kb acc := by
+  intro kb
+  induction kb with
+  | zero =>
+    intro acc l h
+    exact h
+  | succ k ih =>
+    intro acc l h
+    rw [outerRangeAux]
+    split
+    · split
+      · exact ih _ _ (List.mem_cons_of_mem _ h)
+      · exact ih _ _ h
+    · exact ih _ _ h
+
+/-- The stream for base index `k < kb` is among the outer loop's lists when
+its guards pass. -/
+theorem stream_mem_outerRangeAux (lo hi : Nat) : ∀ (kb : Nat) (k : Nat),
+    k < kb →
+    (2 * k + 1) * (2 * k + 1) * (2 * k + 1) ≤ hi →
+    sqfreeAux (2 * k + 1) (isqrt (2 * k + 1)) = true →
+    (isqrt ((lo - 1) / ((2 * k + 1) * (2 * k + 1) * (2 * k + 1))) + 1) / 2 <
+      (isqrt (hi / ((2 * k + 1) * (2 * k + 1) * (2 * k + 1))) + 1) / 2 →
+    ∀ acc, genOddRangeAux ((2 * k + 1) * (2 * k + 1) * (2 * k + 1))
+        ((isqrt ((lo - 1) / ((2 * k + 1) * (2 * k + 1) * (2 * k + 1))) + 1) / 2)
+        ((isqrt (hi / ((2 * k + 1) * (2 * k + 1) * (2 * k + 1))) + 1) / 2 -
+          (isqrt ((lo - 1) / ((2 * k + 1) * (2 * k + 1) * (2 * k + 1))) + 1) / 2)
+        [] ∈ outerRangeAux lo hi kb acc := by
+  intro kb
+  induction kb with
+  | zero =>
+    intro k hk
+    omega
+  | succ kb' ih =>
+    intro k hk hb3 hsf hst acc
+    rw [outerRangeAux]
+    rcases Nat.lt_or_ge k kb' with hlt | hge
+    · split
+      · split
+        · exact ih k hlt hb3 hsf hst _
+        · exact ih k hlt hb3 hsf hst _
+      · exact ih k hlt hb3 hsf hst _
+    · have hkeq : k = kb' := by omega
+      subst hkeq
+      have hguard : ((2 * k + 1) * (2 * k + 1) * (2 * k + 1) ≤ hi &&
+          sqfreeAux (2 * k + 1) (isqrt (2 * k + 1))) = true := by
+        simp only [Bool.and_eq_true, decide_eq_true_eq]
+        exact ⟨hb3, hsf⟩
+      rw [if_pos hguard, if_pos hst]
+      exact outerRangeAux_acc_mono lo hi _ _ _ (List.mem_cons_self ..)
+
+/-- Chunk-level completeness (step 3 capstone): every odd powerful number in
+`[lo, hi]` appears in some stream of the outer loop, provided `1 ≤ lo`,
+`hi` is in `isqrt` range, and `kb` covers every odd cube base up to `hi`. -/
+theorem mem_of_odd_powerful {lo hi kb m : Nat} (hlo : 1 ≤ lo)
+    (hhi : hi < 2 ^ 64)
+    (hkb : hi < (2 * kb + 1) * (2 * kb + 1) * (2 * kb + 1))
+    (hodd : Odd m) (hpow : m.Powerful) (h1 : lo ≤ m) (h2 : m ≤ hi) :
+    ∃ l ∈ outerRangeAux lo hi kb [], m ∈ l := by
+  obtain ⟨a, b, haodd, hbodd, hbsf, hm⟩ :=
+    Erdos364.exists_odd_sq_mul_cube hpow hodd
+  obtain ⟨j, hj⟩ := haodd
+  obtain ⟨k, hk⟩ := hbodd
+  have ha1 : 1 ≤ a := by omega
+  have hb1 : 1 ≤ b := by omega
+  have hb3 : b * b * b ≤ hi := by
+    calc b * b * b = b ^ 3 := by ring
+    _ ≤ a ^ 2 * b ^ 3 := Nat.le_mul_of_pos_left _ (pow_pos (by omega) 2)
+    _ = m := hm.symm
+    _ ≤ hi := h2
+  have hbk : b * b * b < (2 * kb + 1) * (2 * kb + 1) * (2 * kb + 1) := by
+    omega
+  have hkkb : k < kb := by
+    by_contra hcon
+    push_neg at hcon
+    have hble : 2 * kb + 1 ≤ 2 * k + 1 := by omega
+    have hcube := Nat.mul_le_mul (Nat.mul_le_mul hble hble) hble
+    rw [← hk] at hcube
+    omega
+  have hb0 : b ≠ 0 := by omega
+  have hb64 : b < 2 ^ 64 := by
+    have hbb : b ≤ b * b * b := by
+      simpa using Nat.mul_le_mul (Nat.mul_le_mul hb1 hb1) (le_refl b)
+    omega
+  have hsf : sqfreeAux b (isqrt b) = true :=
+    (sqfreeAux_isqrt_iff hb0 hb64).mpr hbsf
+  set b3 := b * b * b with hb3def
+  have hb3pos : 0 < b3 := by positivity
+  have hmab : m = a * a * b3 := by
+    rw [hm, hb3def]
+    ring
+  have hq64 : hi / b3 < 2 ^ 64 := lt_of_le_of_lt (Nat.div_le_self _ _) hhi
+  have hl64 : (lo - 1) / b3 < 2 ^ 64 :=
+    lt_of_le_of_lt (Nat.div_le_self _ _) (by omega)
+  -- upper bound: a <= isqrt (hi / b3)
+  have haup : a ≤ isqrt (hi / b3) := by
+    rw [le_isqrt_iff hq64]
+    rw [Nat.le_div_iff_mul_le hb3pos]
+    calc a * a * b3 = m := hmab.symm
+    _ ≤ hi := h2
+  -- lower bound: isqrt ((lo-1) / b3) < a
+  have halow : isqrt ((lo - 1) / b3) < a := by
+    by_contra hcon
+    push_neg at hcon
+    have h1a : a * a ≤ (lo - 1) / b3 := by
+      obtain ⟨hs1, hs2⟩ := isqrt_correct hl64
+      calc a * a ≤ isqrt ((lo - 1) / b3) * isqrt ((lo - 1) / b3) :=
+            Nat.mul_le_mul hcon hcon
+      _ ≤ (lo - 1) / b3 := hs1
+    have : a * a * b3 ≤ lo - 1 := by
+      rw [← Nat.le_div_iff_mul_le hb3pos]
+      exact h1a
+    omega
+  -- index arithmetic: a = 2j+1 lands at stream index j - skip
+  have hskip : (isqrt ((lo - 1) / b3) + 1) / 2 ≤ j := by omega
+  have htot : j < (isqrt (hi / b3) + 1) / 2 := by omega
+  refine ⟨_, stream_mem_outerRangeAux lo hi kb k hkkb
+    (by rw [← hk]; exact hb3) (by rw [← hk]; exact hsf) ?_ [], ?_⟩
+  · rw [← hk, ← hb3def]
+    omega
+  · rw [mem_genOddRangeAux]
+    refine Or.inl ⟨j - (isqrt ((lo - 1) / ((2 * k + 1) * (2 * k + 1) *
+      (2 * k + 1))) + 1) / 2, ?_, ?_⟩
+    · rw [← hk, ← hb3def]
+      omega
+    · rw [← hk, ← hb3def]
+      have hja : 2 * ((isqrt ((lo - 1) / b3) + 1) / 2 +
+          (j - (isqrt ((lo - 1) / b3) + 1) / 2)) + 1 = a := by omega
+      rw [hja]
+      exact hmab
+
 end Erdos364.Spike
