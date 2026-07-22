@@ -101,3 +101,12 @@ enumeration being forced more than once through the let-bound checker
 shape plus documented run variance. Conclusion stands on the measured
 artifact, not the estimate: sqfree table + single-shape checker = ~25x at
 the top end.
+
+## Full-rung revalidation (phase 6, same day)
+
+All 320 certified 10^12 windows re-verified through checkChunkT over
+bTable1e12: 320/320 PASS, zero FAIL, specs byte-identical to the certified
+table. Summed kernel time 2,422s vs 57,652s certified (23.8x); wall 13.5
+minutes at laptop parallelism 3; max chunk 11s (was 305s); peak 3.2 GB.
+The optimized checker reproduces the certified enumeration exactly and the
+rung that needed an overnight pod now fits a coffee break.
