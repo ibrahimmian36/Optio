@@ -6,3 +6,4 @@ import Erdos364.Tiling
 import Erdos364.Representation
 import Erdos364.Generator
 import Erdos364.Sorted
+import Erdos364.Cert
