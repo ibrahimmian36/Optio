@@ -48,6 +48,45 @@ planned. If merge dominates, phase C targets the merge instead. If nothing
 dominates (flat profile), the optimization phase is cancelled and 10^14 is
 priced as brute force.
 
-## Results
+## Results (chunk 319, window [993775715691, 1000000000002], kb = 5000)
 
-(filled after the runs)
+    run          wall      peak RSS   green (mirror agrees)
+    full         305.5s    4.4 GB     yes (the certified chunk itself)
+    lenOnly      396.1s    5.4 GB     yes  (streams + merge + length)
+    genOnly      163.6s    5.0 GB     yes  (streams, sqfree included)
+    genNoSqfree  8.3s      1.5 GB     yes  (streams, sqfree removed)
+    isqrtOnly    6.6s      1.4 GB     yes
+
+Smoke on chunk 0: all three variants green at ~1s (mirror validation).
+
+## Attribution
+
+1. THE SQUAREFREE TEST IS ~95% OF GENERATION: 163.6s with it, 8.3s without
+   it, and the without-run builds MORE stream cells (every odd b admitted).
+   Root cause of the position-dependent cost curve: per-chunk kb grows like
+   cbrt(window), so chunk 0 trial-divides ~70 candidate b values and chunk
+   319 trial-divides ~5,000, each at O(sqrt b) kernel steps. Hypothesis
+   confirmed.
+2. MERGE IS THE SECOND FIRST-CLASS COST, not negligible as assumed:
+   lenOnly - genOnly ~ 230s, full - genOnly ~ 140s. The two brackets
+   disagree because run-to-run variance on this laptop is large (note full
+   at 305s vs lenOnly at 396s, though full does strictly more work); the
+   honest statement is merge ~ 140-230s at the top end, i.e. comparable to
+   sqfree. Mechanism: ~2,000 mostly-singleton streams, ~11 balanced rounds
+   over ~2,500 entries, tens of kernel reductions per element-step; genuine
+   kernel overhead, no accidental quadratic found.
+3. isqrt and stream construction are noise (~8s together).
+
+## Decision (feeds the 1e14 plan phase C)
+
+Build the shared squarefree-b table: it deletes finding 1 (~155s/top
+chunk) for a one-time table cost, exactly as planned. Merge (finding 2)
+survives the optimization and becomes the floor: with sqfree gone, a
+10^14 top chunk should cost roughly its merge+scan (~140-230s local,
+faster on the pod). Revised 10^14 kernel-batch estimate: ~3,200 chunks,
+entry-bound not kb-bound after the table, roughly 15-20 pod-hours at
+8-way (~$15-20) instead of the ~100x brute-force blowup. A merge redesign
+is NOT scheduled: its cost is entry-proportional and chunking-invariant,
+the pod absorbs it, and new soundness surface for a second optimization is
+not worth it at this rung. Revisit only if 10^14 pricing on the pod comes
+in materially worse than projected.
