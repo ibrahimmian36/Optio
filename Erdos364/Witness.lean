@@ -53,3 +53,18 @@ theorem not_powerful_512706121226 : ¬ Nat.Powerful 512706121226 :=
   not_powerful_of_witness Nat.prime_two (by decide) (by decide)
 
 end Erdos364
+
+namespace Erdos364
+
+/-- `13837575261124 = 13837575261123 + 1`: middle of A076445's sixth pair;
+the pair opens `3` mod `4`, so the witness is `19`. -/
+theorem not_powerful_13837575261124 : ¬ Nat.Powerful 13837575261124 :=
+  not_powerful_of_witness (by norm_num : Nat.Prime 19) (by decide)
+    (by decide)
+
+/-- `99612037019890 = 99612037019889 + 1`: middle of A076445's seventh
+pair. -/
+theorem not_powerful_99612037019890 : ¬ Nat.Powerful 99612037019890 :=
+  not_powerful_of_witness Nat.prime_two (by decide) (by decide)
+
+end Erdos364
