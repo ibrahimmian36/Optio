@@ -116,4 +116,49 @@ def check (X kb count : Nat) (expected : List Nat) : Bool :=
   let l := oddPowerfulList X kb
   l.length == count && (scanGap2Aux l []).reverse == expected
 
+/-! ## Chunked variant
+
+The monolithic checker hits a kernel memory wall between `10^8` and `10^9`
+(measured: 12.6s at `10^8`; at `10^9` the reduction term graph grows past
+1.7 GB resident and the process thrashes without completing). The certificate
+therefore splits `[1, X]` into ranges, one Bool equality per range, each in
+its own process so kernel memory resets. Ranges overlap by `2` so no gap-2
+pair can straddle a boundary unseen; Phase 2 proves the stitching lemma. -/
+
+/-- The ascending stream `(2(kLo+i)+1)^2 * b3` for `i = 0, ..., fuel-1`:
+the ranged analogue of `genOddAux`, skipping the first `kLo` odd values
+of `a`. -/
+def genOddRangeAux (b3 kLo : Nat) : Nat → List Nat → List Nat
+  | 0, acc => acc
+  | i + 1, acc =>
+    let a := 2 * (kLo + i) + 1
+    genOddRangeAux b3 kLo i (a * a * b3 :: acc)
+
+/-- Per-`b` ascending streams restricted to values in `[lo, hi]`: for each odd
+squarefree `b`, the odd `a` range is `isqrt((lo-1)/b^3) < a <= isqrt(hi/b^3)`. -/
+def outerRangeAux (lo hi : Nat) : Nat → List (List Nat) → List (List Nat)
+  | 0, acc => acc
+  | k + 1, acc =>
+    let b := 2 * k + 1
+    let b3 := b * b * b
+    outerRangeAux lo hi k
+      (if b3 ≤ hi && sqfreeAux b (isqrt b) then
+        let skip := (isqrt ((lo - 1) / b3) + 1) / 2
+        let total := (isqrt (hi / b3) + 1) / 2
+        (if skip < total then
+          genOddRangeAux b3 skip (total - skip) [] :: acc
+        else acc)
+      else acc)
+
+/-- Sorted odd powerful numbers in `[lo, hi]`; `kb` bakes `(cbrt hi + 1)/2`. -/
+def oddPowerfulRange (lo hi kb : Nat) : List Nat :=
+  mergeAll 40 (outerRangeAux lo hi kb [])
+
+/-- Chunk checker over `[lo, hi]` extended to `hi + 2` for boundary overlap:
+expected values are the entries in `[lo, hi + 2]` and the gap-2 members found
+among them, both computed independently by the Python engine. -/
+def checkChunk (lo hi kb count : Nat) (expected : List Nat) : Bool :=
+  let l := oddPowerfulRange lo (hi + 2) kb
+  l.length == count && (scanGap2Aux l []).reverse == expected
+
 end Erdos364.Spike
