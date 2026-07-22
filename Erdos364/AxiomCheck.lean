@@ -9,6 +9,8 @@ import Erdos364.Tiling
 import Erdos364.Representation
 import Erdos364.Generator
 import Erdos364.Sorted
+import Erdos364.BTable
+import Erdos364.TableGen
 
 /-! Publication gate manifest: every published theorem, `#print axioms`-ed
 for the record. Every entry must depend on at most
@@ -62,3 +64,15 @@ second gate layer (Phase 2 step 8). -/
 #print axioms Erdos364.Spike.scanGap2Aux_catches
 #print axioms Erdos364.Spike.length_outerRangeAux
 #print axioms Erdos364.Spike.checkChunk_sound
+
+-- Phase 5: the squarefree cube-base table and the table-driven checker
+#print axioms Erdos364.Spike.mkBTableAux_acc_mono
+#print axioms Erdos364.Spike.mem_mkBTableAux
+#print axioms Erdos364.Spike.mem_mkBTable
+#print axioms Erdos364.Spike.mkBTable_all_odd
+#print axioms Erdos364.Spike.outerFromTable_acc_mono
+#print axioms Erdos364.Spike.stream_mem_outerFromTable
+#print axioms Erdos364.Spike.outerFromTable_lists
+#print axioms Erdos364.Spike.length_outerFromTable
+#print axioms Erdos364.Spike.mem_of_odd_powerful_T
+#print axioms Erdos364.Spike.checkChunkT_sound
