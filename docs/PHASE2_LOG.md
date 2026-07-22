@@ -11,3 +11,4 @@
 - ALL SIX PROOF STEPS DONE, manifest 35 theorems, gate-clean, zero sorry
 - 10^12 chunk set COMPLETE on pod 2026-07-22 13:47 UTC: 320/320 PASS, 0 fail (141 Mac + 179 pod), 57,652 kernel-s, peak 7.9GB; log = data/chunk_runs/1e12_pod.log
 - step 7 code COMPLETE: Cert.lean spec, gen_certs.py -> 320 C12 modules + Table + all_chunks_pass, Assembly.lean (tiles/side/exp decides + headline-of, compiles locally 10s), Main.lean awaits pod build (-j6)
+- 10^12 RUNG CERTIFIED 2026-07-22: Erdos364.no_powerful_triple_up_to_1e12 built on pod, axioms exactly {propext, Classical.choice, Quot.sound}, no sorry/native. 320 chunks + 35 lemmas. Evidence: data/chunk_runs/cert_1e12_axioms.txt. (all_chunks_pass needed forall_mem_cons chain + line-comment header, both fixed after the pod surfaced them.)
