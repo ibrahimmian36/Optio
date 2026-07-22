@@ -18,7 +18,10 @@ export PATH="$HOME/.elan/bin:$PATH"
 
 cd "$(dirname "$0")/.."
 lake exe cache get
-nohup lake build -j"$jobs" Erdos364.Main >> data/cert_build.log 2>&1 &
+# This Lake lacks the `-j` short flag; use the long form. Limiting jobs is
+# not optional: the heavy top-end chunks peak near 8 GB each, so unbounded
+# parallelism OOM-kills on a 64 GB pod. 6 jobs stays under ~48 GB.
+nohup lake build --jobs "$jobs" Erdos364.Main >> data/cert_build.log 2>&1 &
 echo "certificate build launched, jobs=$jobs"
 echo "watch:  tail -f $(pwd)/data/cert_build.log"
 echo "done when the log shows 'Build completed successfully' and the"
