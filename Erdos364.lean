@@ -7,3 +7,5 @@ import Erdos364.Representation
 import Erdos364.Generator
 import Erdos364.Sorted
 import Erdos364.Cert
+import Erdos364.BTable
+import Erdos364.TableGen
