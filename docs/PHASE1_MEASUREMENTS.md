@@ -74,6 +74,18 @@ slowest chunk 9s, peak RSS 2.0 GB (data/chunk_runs/1e10.log). The 10^12 set
 (320 chunks) is generated and the resumable batch driver
 (scripts/run_chunks.sh) is ready for the overnight run at parallelism 2.
 
+## Overnight 10^12 attempt (2026-07-22 night): stopped, lesson recorded
+
+141/320 chunks passed, 0 failed, 52,354 kernel-seconds banked
+(data/chunk_runs/1e12.log) before Ibby stopped the run. Mid-range chunks
+degraded to 42-49 minutes each against 242s for a top-end chunk run alone:
+two 3-5 GB chunks in parallel plus the OS exceeded 16 GB and the machine
+swapped all night. The three-sample projection missed the parallel-memory
+interaction; per-chunk cost figures stand, the parallelism-2 local plan does
+not. Certificate-scale batches move to a large-RAM pod (64 GB+, ~8-way,
+whole set in roughly 1-2 hours); the driver's resumability means nothing is
+lost either way.
+
 ## Recommendation
 
 Approve the ladder as: 10^10 smoke rung now, 10^12 as the first published
