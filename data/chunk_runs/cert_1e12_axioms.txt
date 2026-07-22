@@ -1,0 +1,1 @@
+'Erdos364.no_powerful_triple_up_to_1e12' depends on axioms: [propext, Classical.choice, Quot.sound]
