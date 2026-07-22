@@ -143,10 +143,10 @@ def outerRangeAux (lo hi : Nat) : Nat → List (List Nat) → List (List Nat)
     let b3 := b * b * b
     outerRangeAux lo hi k
       (if b3 ≤ hi && sqfreeAux b (isqrt b) then
-        let skip := (isqrt ((lo - 1) / b3) + 1) / 2
-        let total := (isqrt (hi / b3) + 1) / 2
-        (if skip < total then
-          genOddRangeAux b3 skip (total - skip) [] :: acc
+        (if (isqrt ((lo - 1) / b3) + 1) / 2 < (isqrt (hi / b3) + 1) / 2 then
+          genOddRangeAux b3 ((isqrt ((lo - 1) / b3) + 1) / 2)
+            ((isqrt (hi / b3) + 1) / 2 - (isqrt ((lo - 1) / b3) + 1) / 2)
+            [] :: acc
         else acc)
       else acc)
 

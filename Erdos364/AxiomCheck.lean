@@ -7,6 +7,7 @@ import Erdos364.Mod4
 import Erdos364.Witness
 import Erdos364.Tiling
 import Erdos364.Representation
+import Erdos364.Generator
 
 /-! Publication gate manifest: every published theorem, `#print axioms`-ed
 for the record. Every entry must depend on at most
@@ -33,3 +34,14 @@ second gate layer (Phase 2 step 8). -/
 -- Step 2: representation
 #print axioms Erdos364.odd_of_dvd_odd
 #print axioms Erdos364.exists_odd_sq_mul_cube
+
+-- Step 3: generator soundness
+#print axioms Erdos364.Spike.isqrtAux_correct
+#print axioms Erdos364.Spike.isqrt_correct
+#print axioms Erdos364.Spike.le_isqrt_iff
+#print axioms Erdos364.Spike.sqfreeAux_eq_false_iff
+#print axioms Erdos364.Spike.sqfreeAux_isqrt_iff
+#print axioms Erdos364.Spike.mem_genOddRangeAux
+#print axioms Erdos364.Spike.outerRangeAux_acc_mono
+#print axioms Erdos364.Spike.stream_mem_outerRangeAux
+#print axioms Erdos364.Spike.mem_of_odd_powerful
