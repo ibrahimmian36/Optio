@@ -14,3 +14,4 @@
 - 10^12 RUNG CERTIFIED 2026-07-22: Erdos364.no_powerful_triple_up_to_1e12 built on pod, axioms exactly {propext, Classical.choice, Quot.sound}, no sorry/native. 320 chunks + 35 lemmas. Evidence: data/chunk_runs/cert_1e12_axioms.txt. (all_chunks_pass needed forall_mem_cons chain + line-comment header, both fixed after the pod surfaced them.)
 - phase 5 BTable.lean + TableGen.lean COMPLETE: mkBTable completeness + all-odd, outerFromTable stack through checkChunkT_sound — all PROVED first-day, manifest at 45, gate-clean
 - phase 5 MEASURED: bTable1e12 eq 80.4s once; chunkT319 12.2s vs 305s certified (25x); merge attribution corrected (~4s); 10^8 smoke rung fully green vs mirrors
+- phase 6 DONE: 320/320 chunkT PASS vs certified specs (diff empty), 2422 kernel-s vs 57652 (23.8x), wall 13.5min local; log data/chunk_runs/T12.log
