@@ -7,3 +7,5 @@
 - step 5 Tiling.lean: tilesFrom Bool fold + mem_of_tiles covering lemma — PROVED, gate-clean
 - step 2 Representation.lean: odd_of_dvd_odd + exists_odd_sq_mul_cube (via Nat.sq_mul_squarefree_of_pos, sf | sq by factorization) — PROVED, gate-clean, hours not days
 - step 3 Generator.lean COMPLETE: isqrt invariant, exact sqfree test, stream membership, acc monotonicity, stream-in-outer, mem_of_odd_powerful capstone — all PROVED, gate-clean (21 manifest entries)
+- step 4 Sorted.lean COMPLETE: stream sorted/all-odd, merge mem+sorted (fueled invariant), round/all lemmas, scan mono+catches, checkChunk_sound capstone — all PROVED
+- ALL SIX PROOF STEPS DONE, manifest 35 theorems, gate-clean, zero sorry
