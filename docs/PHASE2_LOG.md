@@ -10,3 +10,4 @@
 - step 4 Sorted.lean COMPLETE: stream sorted/all-odd, merge mem+sorted (fueled invariant), round/all lemmas, scan mono+catches, checkChunk_sound capstone — all PROVED
 - ALL SIX PROOF STEPS DONE, manifest 35 theorems, gate-clean, zero sorry
 - 10^12 chunk set COMPLETE on pod 2026-07-22 13:47 UTC: 320/320 PASS, 0 fail (141 Mac + 179 pod), 57,652 kernel-s, peak 7.9GB; log = data/chunk_runs/1e12_pod.log
+- step 7 code COMPLETE: Cert.lean spec, gen_certs.py -> 320 C12 modules + Table + all_chunks_pass, Assembly.lean (tiles/side/exp decides + headline-of, compiles locally 10s), Main.lean awaits pod build (-j6)
