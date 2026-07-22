@@ -115,7 +115,7 @@ def main() -> int:
         HEADER
         + "\n".join(import_lines)
         + "\nimport Erdos364.C12.Table\n\nnamespace Erdos364.C12\n\n"
-        + "/-- Every chunk certificate in the table checks. -/\n"
+        + "-- Every chunk certificate in the table checks.\n"
         + "set_option maxRecDepth 1000000 in\n"
         + "theorem all_chunks_pass :\n"
         + "    ∀ e ∈ table, Erdos364.ChunkSpec.check e = true := by\n"

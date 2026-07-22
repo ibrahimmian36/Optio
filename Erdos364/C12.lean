@@ -327,7 +327,7 @@ import Erdos364.C12.Table
 
 namespace Erdos364.C12
 
-/-- Every chunk certificate in the table checks. -/
+-- Every chunk certificate in the table checks.
 set_option maxRecDepth 1000000 in
 theorem all_chunks_pass :
     ∀ e ∈ table, Erdos364.ChunkSpec.check e = true := by
