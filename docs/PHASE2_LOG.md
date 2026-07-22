@@ -13,3 +13,4 @@
 - step 7 code COMPLETE: Cert.lean spec, gen_certs.py -> 320 C12 modules + Table + all_chunks_pass, Assembly.lean (tiles/side/exp decides + headline-of, compiles locally 10s), Main.lean awaits pod build (-j6)
 - 10^12 RUNG CERTIFIED 2026-07-22: Erdos364.no_powerful_triple_up_to_1e12 built on pod, axioms exactly {propext, Classical.choice, Quot.sound}, no sorry/native. 320 chunks + 35 lemmas. Evidence: data/chunk_runs/cert_1e12_axioms.txt. (all_chunks_pass needed forall_mem_cons chain + line-comment header, both fixed after the pod surfaced them.)
 - phase 5 BTable.lean + TableGen.lean COMPLETE: mkBTable completeness + all-odd, outerFromTable stack through checkChunkT_sound — all PROVED first-day, manifest at 45, gate-clean
+- phase 5 MEASURED: bTable1e12 eq 80.4s once; chunkT319 12.2s vs 305s certified (25x); merge attribution corrected (~4s); 10^8 smoke rung fully green vs mirrors
