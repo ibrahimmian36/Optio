@@ -102,18 +102,25 @@ def main() -> int:
     )
     (cdir / "Table.lean").write_text(table, encoding="utf-8")
 
+    # Combine the per-chunk theorems into `∀ e ∈ table, check e` as a
+    # right-nested `forall_mem_cons` term. A `simp only [table, ...]` does
+    # not scale to hundreds of entries (recursion-depth blowup); the refine
+    # chain is linear and each step consumes one concrete cons. `check e`
+    # is definitionally `checkChunk ...`, so each `chunk_NNN` is accepted.
+    refine_lines = "\n".join(
+        f"  refine List.forall_mem_cons.mpr ⟨{name}, ?_⟩"
+        for name in proof_names
+    )
     c12 = (
         HEADER
         + "\n".join(import_lines)
         + "\nimport Erdos364.C12.Table\n\nnamespace Erdos364.C12\n\n"
         + "/-- Every chunk certificate in the table checks. -/\n"
+        + "set_option maxRecDepth 1000000 in\n"
         + "theorem all_chunks_pass :\n"
         + "    ∀ e ∈ table, Erdos364.ChunkSpec.check e = true := by\n"
-        + "  simp only [table, ChunkSpec.check, List.forall_mem_cons,\n"
-        + "    List.not_mem_nil, false_implies, implies_true, and_true]\n"
-        + "  exact ⟨"
-        + ", ".join(proof_names)
-        + "⟩\n\nend Erdos364.C12\n"
+        + refine_lines
+        + "\n  exact List.forall_mem_nil _\n\nend Erdos364.C12\n"
     )
     (root / "Erdos364" / "C12.lean").write_text(c12, encoding="utf-8")
     print(f"emitted {len(bounds)} chunk modules + Table.lean + C12.lean")
