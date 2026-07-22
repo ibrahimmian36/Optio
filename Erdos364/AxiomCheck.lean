@@ -8,6 +8,7 @@ import Erdos364.Witness
 import Erdos364.Tiling
 import Erdos364.Representation
 import Erdos364.Generator
+import Erdos364.Sorted
 
 /-! Publication gate manifest: every published theorem, `#print axioms`-ed
 for the record. Every entry must depend on at most
@@ -45,3 +46,19 @@ second gate layer (Phase 2 step 8). -/
 #print axioms Erdos364.Spike.outerRangeAux_acc_mono
 #print axioms Erdos364.Spike.stream_mem_outerRangeAux
 #print axioms Erdos364.Spike.mem_of_odd_powerful
+
+-- Step 4: merge and scan soundness
+#print axioms Erdos364.Spike.stream_sorted
+#print axioms Erdos364.Spike.stream_all_odd
+#print axioms Erdos364.Spike.outerRangeAux_lists
+#print axioms Erdos364.Spike.mem_mergeAux
+#print axioms Erdos364.Spike.sorted_mergeAux
+#print axioms Erdos364.Spike.mem_mergeRound
+#print axioms Erdos364.Spike.sorted_mergeRound
+#print axioms Erdos364.Spike.length_mergeRound
+#print axioms Erdos364.Spike.mem_mergeAll
+#print axioms Erdos364.Spike.sorted_mergeAll
+#print axioms Erdos364.Spike.scanGap2Aux_acc_mono
+#print axioms Erdos364.Spike.scanGap2Aux_catches
+#print axioms Erdos364.Spike.length_outerRangeAux
+#print axioms Erdos364.Spike.checkChunk_sound
