@@ -5,6 +5,8 @@ Authors: Millennium Research (Ibby Mian), with Claude
 -/
 import Erdos364.Mod4
 import Erdos364.Witness
+import Erdos364.Tiling
+import Erdos364.Representation
 
 /-! Publication gate manifest: every published theorem, `#print axioms`-ed
 for the record. Every entry must depend on at most
@@ -23,3 +25,11 @@ second gate layer (Phase 2 step 8). -/
 #print axioms Erdos364.not_powerful_130576328
 #print axioms Erdos364.not_powerful_189750626
 #print axioms Erdos364.not_powerful_512706121226
+
+-- Step 5: tiling
+#print axioms Erdos364.mem_of_tilesFrom
+#print axioms Erdos364.mem_of_tiles
+
+-- Step 2: representation
+#print axioms Erdos364.odd_of_dvd_odd
+#print axioms Erdos364.exists_odd_sq_mul_cube
