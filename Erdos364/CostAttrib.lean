@@ -62,3 +62,14 @@ def isqrtProbe (lo hi : Nat) : Nat → Nat → Nat
       else acc)
 
 end Erdos364.CostAttrib
+
+namespace Erdos364.CostAttrib
+
+open Erdos364.Spike in
+/-- Length of the fully merged list: `lenOnly - sumLens` is the merge cost;
+if `checkChunk` is near twice this, the kernel evaluates the let-bound list
+once per use. -/
+def lenOnly (lo hi kb : Nat) : Nat :=
+  (oddPowerfulRange lo hi kb).length
+
+end Erdos364.CostAttrib
