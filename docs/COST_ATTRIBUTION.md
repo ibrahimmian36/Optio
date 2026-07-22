@@ -90,3 +90,14 @@ is NOT scheduled: its cost is entry-proportional and chunking-invariant,
 the pod absorbs it, and new soundness surface for a second optimization is
 not worth it at this rung. Revisit only if 10^14 pricing on the pod comes
 in materially worse than projected.
+
+## Postscript (phase 5 measured, same day)
+
+The table-driven checker lands at 12.2s on chunk 319 (vs 305s certified,
+25x) with the rung's entire squarefree cost paid once in an 80.4s table
+verification. This falsifies the merge attribution above: merge is ~4s,
+not 140-230s. The unexplained seconds in `full`/`lenOnly` were the
+enumeration being forced more than once through the let-bound checker
+shape plus documented run variance. Conclusion stands on the measured
+artifact, not the estimate: sqfree table + single-shape checker = ~25x at
+the top end.
