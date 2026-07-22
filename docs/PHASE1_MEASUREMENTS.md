@@ -67,6 +67,13 @@ the integral): full 10^12 is roughly 4-7 hours sequential, 1.5-3 hours at
 is minutes. 10^13 extrapolates to days without the optimization pass; 10^14
 is out of reach until the top-end cost is understood and reduced.
 
+## Smoke rung result (approved ladder, run 2026-07-22)
+
+10^10 in 32 entry-balanced chunks, parallelism 3: ALL PASS. Summed wall 218s,
+slowest chunk 9s, peak RSS 2.0 GB (data/chunk_runs/1e10.log). The 10^12 set
+(320 chunks) is generated and the resumable batch driver
+(scripts/run_chunks.sh) is ready for the overnight run at parallelism 2.
+
 ## Recommendation
 
 Approve the ladder as: 10^10 smoke rung now, 10^12 as the first published
