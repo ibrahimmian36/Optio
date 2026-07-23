@@ -3,7 +3,9 @@
 # the 10^14 base table, verify the table against mkBTable (the rung's
 # one-time squarefree cost), then launch the 3,204-chunk batch in the
 # background through the resumable driver. Requires the repo at ./Optio
-# (rsync from the workstation, or clone the repo).
+# (rsync from the workstation, or clone the repo). The chunk runner files
+# in spike_runs/ are not tracked; generate them first with
+# scripts/gen_btable.py and scripts/gen_certs14.py.
 #
 # Usage: bash Optio/scripts/pod_phase7.sh [parallel]   (default 8)
 set -euo pipefail

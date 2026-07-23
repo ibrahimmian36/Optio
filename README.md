@@ -89,6 +89,13 @@ outputs of the subsequent clean builds. The Lean sources of the certified closur
 are frozen as attested (cosmetic lint cleanups deliberately not applied);
 the run ledger in `docs/PHASE2_LOG.md` records every failure hit on the
 way, including two reporting bugs found and fixed in our own harness.
+Two known docstring slips are preserved by that freeze rather than
+edited: `Main.lean` suggests a `-j6` flag that this Lake version spells
+`--jobs 6`, and `Tiling.lean` carries a stale remark about its imports.
+Neither affects any statement or proof. A few modules (`BTableData1e8`,
+`BTableData1e12`, `CostAttrib`) are measurement and revalidation
+instrumentation retained for the record; they are not part of the
+certified closure.
 
 ## Layout
 
