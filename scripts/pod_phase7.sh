@@ -20,9 +20,14 @@ cd "$(dirname "$0")/.."
 lake exe cache get
 lake build Erdos364.BTableData1e14 Erdos364.TableGen
 
-echo "verifying bTable1e14 against mkBTable (one-time, expect ~10-15 min)"
-/usr/bin/time -v lake env lean spike_runs/BTableEq1e14.lean 2>&1 | \
-  grep -E "Elapsed|Maximum resident" || true
+echo "verifying bTable1e14 against mkBTable (one-time)"
+# Do NOT filter this through grep: an earlier version piped the output to
+# grep and then echoed "table verified" unconditionally, which hid a real
+# heartbeat-limit failure. Fail loudly instead.
+if ! lake env lean spike_runs/BTableEq1e14.lean; then
+  echo "TABLE VERIFICATION FAILED - stopping"
+  exit 1
+fi
 echo "table verified"
 
 nohup scripts/run_chunks.sh T14 "$par" >> data/chunk_runs/t14_console.log 2>&1 &
