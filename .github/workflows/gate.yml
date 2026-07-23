@@ -1,0 +1,33 @@
+name: axiom gate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install elan
+        run: |
+          curl -sSf https://elan.lean-lang.org/elan-init.sh | \
+            sh -s -- -y --default-toolchain leanprover/lean4:v4.30.0
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+
+      - name: Cache lake packages
+        uses: actions/cache@v4
+        with:
+          path: .lake
+          key: lake-${{ runner.os }}-${{ hashFiles('lake-manifest.json', 'lean-toolchain') }}
+
+      - name: Fetch mathlib cache
+        run: lake exe cache get
+
+      - name: Build the soundness library
+        run: lake build
+
+      - name: Run the axiom gate
+        run: scripts/axiom_gate.sh
