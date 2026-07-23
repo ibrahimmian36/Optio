@@ -19,9 +19,11 @@ namespace Erdos364
 
 -- The rung table is exactly the odd squarefree cube bases in range.
 -- (A `/-- -/` doc comment cannot precede `set_option ... in` in this
--- Lean; use a line comment. Detaching the maxRecDepth bump is what broke
--- the first attempt at this build.)
+-- Lean; use a line comment.) `maxHeartbeats 0` lifts the elaborator's
+-- step budget: the check is minutes of genuine kernel work, and the
+-- default 200000-heartbeat ceiling aborts it partway.
 set_option maxRecDepth 1000000 in
+set_option maxHeartbeats 0 in
 theorem bTable1e14_eq : Spike.bTable1e14 = Spike.mkBTable 23208 := by
   decide +kernel
 
