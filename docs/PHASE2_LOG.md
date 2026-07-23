@@ -17,3 +17,4 @@
 - phase 6 DONE: 320/320 chunkT PASS vs certified specs (diff empty), 2422 kernel-s vs 57652 (23.8x), wall 13.5min local; log data/chunk_runs/T12.log
 - 10^14 STAGED while batch runs: 2 new witness kills, C14 modules (3204+Table+composition) via gen_lib14.py, Assembly14 headline-of PROVED locally (conditional on table eq + chunk certs), Main14 pod-only
 - 10^14 kernel batch COMPLETE on pod: 3204/3204 PASS, 0 fail, indices exactly match c14_specs.json; 107,603 kernel-s (~30 CPU-h), max chunk 61s, peak 6.9GB; log data/chunk_runs/T14_pod.log
+- 10^14 RUNG CERTIFIED 2026-07-23: no_powerful_triple_up_to_1e14 axioms exactly {propext, Classical.choice, Quot.sound}, no sorry; root causes fixed en route: doc-comment/set_option parse trap (again) + default maxHeartbeats aborting the table eq + pod_phase7.sh grep-masking that failure as success; evidence cert_1e14_axioms.txt + cert_build_1e14.log (3204 modules)
