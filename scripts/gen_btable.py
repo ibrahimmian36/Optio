@@ -11,7 +11,6 @@ Usage: gen_btable.py X TAG [--smoke N]
 
 from __future__ import annotations
 
-import math
 import sys
 from pathlib import Path
 
@@ -82,7 +81,6 @@ def main() -> int:
         n = int(sys.argv[sys.argv.index("--smoke") + 1])
         odd = powerful_upto(x + 2, odd_only=True)
         gap2_all = set(int(v) for v in odd[:-1][np.diff(odd) == 2].tolist())
-        inner = odd[odd <= x]
         width = x // n
         for idx in range(n):
             lo = idx * width + 1
@@ -102,7 +100,6 @@ def main() -> int:
                 encoding="utf-8",
             )
             print(f"ChunkT_{tag}_{idx}.lean: [{lo}, {hi}] cnt={len(wset)}")
-        _ = inner, math
     return 0
 
 
