@@ -16,3 +16,4 @@
 - phase 5 MEASURED: bTable1e12 eq 80.4s once; chunkT319 12.2s vs 305s certified (25x); merge attribution corrected (~4s); 10^8 smoke rung fully green vs mirrors
 - phase 6 DONE: 320/320 chunkT PASS vs certified specs (diff empty), 2422 kernel-s vs 57652 (23.8x), wall 13.5min local; log data/chunk_runs/T12.log
 - 10^14 STAGED while batch runs: 2 new witness kills, C14 modules (3204+Table+composition) via gen_lib14.py, Assembly14 headline-of PROVED locally (conditional on table eq + chunk certs), Main14 pod-only
+- 10^14 kernel batch COMPLETE on pod: 3204/3204 PASS, 0 fail, indices exactly match c14_specs.json; 107,603 kernel-s (~30 CPU-h), max chunk 61s, peak 6.9GB; log data/chunk_runs/T14_pod.log
