@@ -76,11 +76,16 @@ theorems) builds on an ordinary machine:
 The gate checks a 61-theorem curated manifest, a mechanical 260-theorem
 whole-library audit, and the committed certificate records, and CI runs
 it on every push. The certificate modules themselves (`C12`, `C14`,
-`Main`, `Main14`) need roughly 30 CPU-hours and up to 23 GB of memory;
+`Main`, `Main14`) need roughly 46 CPU-hours (16 at 10^12, 30 at 10^14);
+per-chunk memory peaks in the committed logs reach 7.9 GB, and the
+one-time 10^14 table verification wants tens of GB free, so
 `scripts/pod_final14.sh` reproduces the 10^14 build on a 64 GB machine.
 Their `#print axioms` outputs are committed at
 `data/chunk_runs/cert_1e12_axioms.txt` and `cert_1e14_axioms.txt`, with
-build and batch logs alongside. The Lean sources of the certified closure
+build and batch logs alongside. Note that the committed build logs end at
+the failed attempts the run ledger describes (a detached `set_option` and
+a heartbeat abort, both diagnosed there); the axiom records are the
+outputs of the subsequent clean builds. The Lean sources of the certified closure
 are frozen as attested (cosmetic lint cleanups deliberately not applied);
 the run ledger in `docs/PHASE2_LOG.md` records every failure hit on the
 way, including two reporting bugs found and fixed in our own harness.

@@ -3,7 +3,7 @@
 # toolchain, pulls the mathlib cache, and builds Erdos364.Main, which
 # re-checks all 320 chunk certificates in the kernel and prints the
 # axioms of the headline theorem. Requires the repo at ./Optio (rsync it
-# from the workstation; the repo is private so there is no clone path).
+# from the workstation, or clone the repo).
 #
 # Usage: bash Optio/scripts/pod_cert_build.sh [jobs]   (default 6 for 64 GB)
 set -euo pipefail

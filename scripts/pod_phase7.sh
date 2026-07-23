@@ -3,7 +3,7 @@
 # the 10^14 base table, verify the table against mkBTable (the rung's
 # one-time squarefree cost), then launch the 3,204-chunk batch in the
 # background through the resumable driver. Requires the repo at ./Optio
-# (rsync from the workstation; the repo is private).
+# (rsync from the workstation, or clone the repo).
 #
 # Usage: bash Optio/scripts/pod_phase7.sh [parallel]   (default 8)
 set -euo pipefail
