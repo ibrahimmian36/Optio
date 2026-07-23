@@ -11,6 +11,9 @@ import Erdos364.Generator
 import Erdos364.Sorted
 import Erdos364.BTable
 import Erdos364.TableGen
+import Erdos364.Assembly
+import Erdos364.Assembly14
+import Erdos364.Bridge
 
 /-! Publication gate manifest: every published theorem, `#print axioms`-ed
 for the record. Every entry must depend on at most
@@ -76,3 +79,21 @@ second gate layer (Phase 2 step 8). -/
 #print axioms Erdos364.Spike.length_outerFromTable
 #print axioms Erdos364.Spike.mem_of_odd_powerful_T
 #print axioms Erdos364.Spike.checkChunkT_sound
+
+-- Steps 6 (10^14 extension) and 7: assembly layers and the bridge
+#print axioms Erdos364.not_powerful_13837575261124
+#print axioms Erdos364.not_powerful_99612037019890
+#print axioms Erdos364.tiles_1e12
+#print axioms Erdos364.side_1e12
+#print axioms Erdos364.exp_known_1e12
+#print axioms Erdos364.known_kills
+#print axioms Erdos364.no_powerful_triple_up_to_1e12_of
+#print axioms Erdos364.tiles_1e14
+#print axioms Erdos364.side_1e14
+#print axioms Erdos364.reach_1e14
+#print axioms Erdos364.blen_1e14
+#print axioms Erdos364.exp_known_1e14
+#print axioms Erdos364.known_kills_14
+#print axioms Erdos364.no_powerful_triple_up_to_1e14_of
+#print axioms Erdos364.bounded_of_erdos364
+#print axioms Erdos364.erdos364_false_of_witness
