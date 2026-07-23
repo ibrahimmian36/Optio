@@ -133,6 +133,9 @@ def scan(x: int) -> ScanResult:
     for p in pairs.tolist():
         if not (is_powerful_naive(int(p)) and is_powerful_naive(int(p) + 1)):
             raise AssertionError(f"pair {p} fails the naive cross-check")
+    for t in triples.tolist():
+        if not all(is_powerful_naive(int(t) + k) for k in (0, 1, 2)):
+            raise AssertionError(f"triple {t} fails the naive cross-check")
     for m in odd_gap2.tolist():
         if not (is_powerful_naive(int(m)) and is_powerful_naive(int(m) + 2)):
             raise AssertionError(f"odd pair {m} fails the naive cross-check")

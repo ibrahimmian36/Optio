@@ -12,7 +12,8 @@ import Erdos364.Bridge
 by name and `#print axioms`-ed for the record. A hand-maintained list has
 one failure mode: a theorem added later can be forgotten and never
 checked. This file removes that failure mode mechanically. At elaboration
-time it walks every locally buildable module under `Erdos364.*`, finds
+time it walks every module in its own import closure (the root library
+plus the bridge, which is everything the ordinary build produces), finds
 every theorem (and any `axiom` declaration, which would be worse),
 recomputes each axiom closure from the compiled environment, and refuses
 to compile unless everything depends on at most `propext`,

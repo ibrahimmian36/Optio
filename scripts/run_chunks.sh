@@ -20,8 +20,10 @@ if [ "$total" -eq 0 ]; then
 fi
 echo "run start $(date -u +%FT%TZ) tag=${tag} parallel=${par} total=${total}" >> "$log"
 ls spike_runs/Chunk_"${tag}"_*.lean | xargs -P "$par" -I{} scripts/run_one_chunk.sh {} "$log"
-pass=$(grep -c "^PASS" "$log")
-fail=$(grep -c "^FAIL" "$log")
+# Count each chunk by its LAST status line, so a chunk that failed once
+# and passed on a rerun counts as a pass (the log is append-only).
+pass=$(awk '$1=="PASS"||$1=="FAIL"{s[$2]=$1} END{n=0; for(k in s) if(s[k]=="PASS") n++; print n}' "$log")
+fail=$(awk '$1=="PASS"||$1=="FAIL"{s[$2]=$1} END{n=0; for(k in s) if(s[k]=="FAIL") n++; print n}' "$log")
 echo "run end $(date -u +%FT%TZ) pass=${pass} fail=${fail} total=${total}" >> "$log"
 if [ "$fail" -eq 0 ] && [ "$pass" -ge "$total" ]; then
   echo "ALL CHUNKS PASS (${pass}/${total})"
