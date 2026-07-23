@@ -1,9 +1,10 @@
 # Phase 2 overnight work order: proof steps 1 through 6
 
-Millennium Research, 2026-07-22. Self-contained instruction set for an
-8-hour uninterrupted block on Optio, executed by the session after the
-10^12 chunk run posts its final tally. Steps refer to
-docs/ERDOS364_PROOF_PLAN.md.
+Millennium Research, 2026-07-22. Historical: the execution plan for an
+8-hour uninterrupted overnight block on Optio, to begin after the 10^12
+chunk run posted its final tally. The trigger never fired (the run was
+stopped and moved to a pod); see docs/PHASE2_LOG.md for what actually
+ran. Steps refer to docs/ERDOS364_PROOF_PLAN.md.
 
 ## Trigger and machine discipline
 
@@ -58,8 +59,8 @@ compile).
 After each commit: lake build must succeed from clean state of the touched
 modules; #print axioms on each new theorem must show a subset of {propext,
 Classical.choice, Quot.sound}. Keep a running log in
-docs/OVERNIGHT_LOG.md: timestamp, lemma, status (proved / sorry'd at
-box / statement-issue found), one line each. No AI tells in any prose.
+the phase log: timestamp, lemma, status (proved / sorry'd at
+box / statement-issue found), one line each.
 Python gates (ruff, mypy, pytest) rerun only if engine/ is touched (it
 should not be).
 
@@ -68,6 +69,5 @@ should not be).
 Lead with: steps fully done, steps partial (what compiles, what is
 sorry'd), any statement found wrong as written, tally of the 10^12 run,
 and the exact remaining work with revised estimates for steps 1-6 and the
-step-7 compile decision (local night vs pod). Update project memory
-(erdos364-program.md) before ending the block. Nothing public, no
+step-7 compile decision (local night vs pod). Nothing public, no
 outreach, no wiki edits. Stop after the report; step 7+ waits for her go.

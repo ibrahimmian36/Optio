@@ -17,13 +17,15 @@ over all kb candidate b-values. Confirm or refute, with numbers.
 
 ## Method
 
-Four timed kernel runs on the same chunk, same machine, same day. Each is
+Five timed kernel runs on the same chunk, same machine, same day. Each is
 one `decide +kernel` on a Nat equality whose expected value is computed
 independently by scripts/attrib_mirror.py, so a green run is also a
 cross-check that the variant computed what the mirror computed.
 
     run          computes                                    isolates
     full         checkChunk (the real certificate Bool)      baseline
+    lenOnly      streams + merge, then just the length       lenOnly - genOnly =
+                 (no gap scan)                               merge cost
     genOnly      sum of stream lengths of the real           full - genOnly =
                  outerRangeAux (generation, no merge/scan)   merge + scan
     genNoSqfree  same, with the squarefree guard removed     genOnly - genNoSqfree =
@@ -57,7 +59,7 @@ priced as brute force.
     genNoSqfree  8.3s      1.5 GB     yes  (streams, sqfree removed)
     isqrtOnly    6.6s      1.4 GB     yes
 
-Smoke on chunk 0: all three variants green at ~1s (mirror validation).
+Smoke on chunk 0: all variants green at ~1s (mirror validation).
 
 ## Attribution
 
@@ -73,7 +75,7 @@ Smoke on chunk 0: all three variants green at ~1s (mirror validation).
    at 305s vs lenOnly at 396s, though full does strictly more work); the
    honest statement is merge ~ 140-230s at the top end, i.e. comparable to
    sqfree. Mechanism: ~2,000 mostly-singleton streams, ~11 balanced rounds
-   over ~2,500 entries, tens of kernel reductions per element-step; genuine
+   over ~2,500 entries, tens of kernel reductions per element-step; real
    kernel overhead, no accidental quadratic found.
 3. isqrt and stream construction are noise (~8s together).
 

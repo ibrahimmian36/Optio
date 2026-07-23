@@ -144,7 +144,7 @@ Effort: half a day.
 
 Repo public. Optional: erdosproblems.com comment and formal-conjectures
 upstream contribution of the bounded result, both drafted for her review,
-sent only by her, mornings only per standing rule. Effort: drafting hours.
+sent only by her. Effort: drafting hours.
 
 ## Step 11 — optimization arc for 10^13 / 10^14 (optional stretch)
 

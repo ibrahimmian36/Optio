@@ -92,8 +92,9 @@ Smoke before scale: every script and every Lean checker runs a tiny validated
 case first. Long runs backgrounded, logs end with exit=$?. Two
 implementations before trusting any number. Append-only ledger; exhausted vs
 sampled is a hard provenance rule. No native_decide, no sorry, gate before
-commit. Commit style follows centurion's log: short imperative subject,
-what-and-why body when needed, no AI tells anywhere. Secret-scan staged
-diffs before any push. Ibby creates the GitHub repo and pushes; local
+commit. Commit style follows centurion's log (centurion: a prior
+internal Lean verification project whose gate tooling this repo adapts):
+short imperative subject, what-and-why body when needed.
+Ibby creates the GitHub repo and pushes; local
 commits here. Nothing public, no outreach, no wiki edits without her
 explicit send.

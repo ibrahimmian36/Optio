@@ -47,6 +47,6 @@ by any certified module), AxiomAudit, Bridge, CI workflow, docs, README.
 ## Acceptance
 
 Gate PASS locally; CI green on push; Bridge compiles sorry-free and
-gate-clean; README readable start to finish by someone who has never seen
-this conversation. Publication drafts (repo public, upstream
+gate-clean; README readable start to finish by someone with no prior
+context. Publication drafts (repo public, upstream
 contribution, provenance note) are step 10 and wait for Ibby.

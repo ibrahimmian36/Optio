@@ -3,7 +3,9 @@
 Millennium Research, 2026-07-22. Plan to extend the kernel-certified
 verification from X = 10^12 to X = 10^14, the realistic ceiling of the
 brute-enumeration method. Sequenced BEFORE the upstream contribution and
-provenance note so the public artifact ships at its strongest.
+provenance note so the public artifact ships at its strongest. Naming
+note: this plan's phases B through G were executed as phases 4 through 8
+in the running log and the PHASE* documents.
 
 ## Framing (unchanged, honest)
 
