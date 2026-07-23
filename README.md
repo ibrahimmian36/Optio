@@ -6,7 +6,7 @@ Erdős and, independently, Mollin and Walsh conjectured there are none.
 
 ## Status
 
-The X = 10^12 rung is certified. `Erdos364.no_powerful_triple_up_to_1e12`
+Both ladder rungs are certified: X = 10^12 and X = 10^14. `Erdos364.no_powerful_triple_up_to_1e12`
 (Erdos364/Main.lean) states there is no consecutive powerful triple with
 n + 2 <= 10^12, and compiles with axioms exactly
 {propext, Classical.choice, Quot.sound}, no sorry, no native_decide. The
@@ -14,7 +14,10 @@ proof composes 35 soundness lemmas over 320 kernel-checked chunk
 certificates (Erdos364/C12/). See docs/ERDOS364_PROOF_PLAN.md for the
 architecture and data/chunk_runs/cert_1e12_axioms.txt for the axiom record.
 
-Next: extend the certified rung to 10^14 (docs/ERDOS364_1E14_PLAN.md), then
+`Erdos364.no_powerful_triple_up_to_1e14` (Erdos364/Main14.lean) extends the
+same claim to n + 2 <= 10^14 over 3,204 table-driven chunk certificates
+(Erdos364/C14/), axioms identical, evidence in
+data/chunk_runs/cert_1e14_axioms.txt. Next:
 the CI gate, the formal-conjectures bridge, and publication.
 
 ## The claim under construction
