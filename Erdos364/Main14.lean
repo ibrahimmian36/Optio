@@ -17,7 +17,10 @@ with bounded parallelism.
 
 namespace Erdos364
 
-/-- The rung table is exactly the odd squarefree cube bases in range. -/
+-- The rung table is exactly the odd squarefree cube bases in range.
+-- (A `/-- -/` doc comment cannot precede `set_option ... in` in this
+-- Lean; use a line comment. Detaching the maxRecDepth bump is what broke
+-- the first attempt at this build.)
 set_option maxRecDepth 1000000 in
 theorem bTable1e14_eq : Spike.bTable1e14 = Spike.mkBTable 23208 := by
   decide +kernel
