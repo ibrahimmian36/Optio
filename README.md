@@ -35,8 +35,10 @@ uncertified computations exist and are cited deliberately:
   powerful pairs (OEIS A060355 b-file). Uncertified, method undocumented.
 - Conditionally to about 7.38 x 10^28: the 13 terms of OEIS A076445
   (McCranie 2002, Reynolds 2005, Noe 2006). Exhaustive only if that list
-  is complete, which is not established; the OEIS entry was renamed in
-  2013 specifically to avoid implying completeness.
+  is complete, which is not established; the OEIS entry was later renamed
+  (between June 2013 and August 2014) to drop the word "consecutive",
+  which had implied that no powerful number lies between the members of a
+  listed pair.
 - Known pairs to about 8.1 x 10^66: Alekseyev's conjectured extension of
   A076445 (2012), explicitly not known to be consecutive. None of the 33
   known pairs has a powerful middle.
