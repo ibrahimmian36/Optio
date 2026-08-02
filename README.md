@@ -1,5 +1,9 @@
 # Optio
 
+[![axiom gate](https://github.com/ibrahimmian36/Optio/actions/workflows/gate.yml/badge.svg)](https://github.com/ibrahimmian36/Optio/actions/workflows/gate.yml)
+[![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
+[![axioms](https://img.shields.io/badge/axioms-propext%20%7C%20Classical.choice%20%7C%20Quot.sound-success)](#the-certified-results)
+
 Kernel-certified verification for Erdős problem 364: are there three
 consecutive powerful numbers? (`n` is powerful when `p | n` implies
 `p^2 | n`.) Erdős [Er76d] and, independently, Mollin and Walsh [MoWa86]
