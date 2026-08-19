@@ -155,8 +155,6 @@ table (removes 4,056 sqfree recomputations per chunk), baked per-b skip
 hints with a tolerant checker (removes the (lo-1)/b^3 isqrt), narrower
 chunks at the top end (bounds memory), parallel CI fan-out. Re-price
 10^13/10^14 after measuring; certify only what the curve honestly supports.
-Effort: ~1 week, separate go/no-go with Ibby.
-
 ## Schedule estimate (working days from overnight-run success)
 
 Steps 1+6 in parallel with 2: days 1-2. Steps 3-4: days 2-4. Steps 5+7:
