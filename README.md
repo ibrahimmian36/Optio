@@ -1,6 +1,7 @@
 # Optio
 
 [![axiom gate](https://github.com/ibrahimmian36/Optio/actions/workflows/gate.yml/badge.svg)](https://github.com/ibrahimmian36/Optio/actions/workflows/gate.yml)
+[![certificates](https://github.com/ibrahimmian36/Optio/actions/workflows/certificates.yml/badge.svg)](https://github.com/ibrahimmian36/Optio/actions/workflows/certificates.yml)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 [![axioms](https://img.shields.io/badge/axioms-propext%20%7C%20Classical.choice%20%7C%20Quot.sound-success)](#the-certified-results)
 
@@ -22,7 +23,7 @@ that is checked end to end by a proof kernel.
         ∀ n : ℕ, n + 2 ≤ 10^14 →
           ¬ (Powerful n ∧ Powerful (n+1) ∧ Powerful (n+2))
 
-Both compile in Lean 4.30.0 / mathlib v4.30.0 with axioms exactly
+What CI checks: the `axiom gate` workflow runs on every push and checks the root module's import closure (the soundness library and the conditional theorems) in a few minutes; the `certificates` workflow runs weekly and on demand, builds `Erdos364.Main` and `Erdos364.Main14` with their 320 and 3,204 certificate chunks (about five and a half hours on a hosted runner), and prints the axioms of both unconditional theorems. Both compile in Lean 4.30.0 / mathlib v4.30.0 with axioms exactly
 `{propext, Classical.choice, Quot.sound}`: no `sorry`, no `native_decide`,
 no extra axioms. `Powerful` is carried byte-identically from
 google-deepmind/formal-conjectures (commit `e923379e6`, pinned in
