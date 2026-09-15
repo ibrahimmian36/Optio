@@ -8,7 +8,7 @@ on:
 jobs:
   gate:
     runs-on: ubuntu-latest
-    timeout-minutes: 350
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
 
@@ -29,8 +29,6 @@ jobs:
 
       - name: Build the soundness library
         run: lake build
-      - name: Build the headline theorems and every certificate they import
-        run: lake build Erdos364.Main Erdos364.Main14
 
       - name: Run the axiom gate
         run: scripts/axiom_gate.sh

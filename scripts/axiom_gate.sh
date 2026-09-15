@@ -43,11 +43,17 @@ if [ -n "$viol" ]; then
   echo "$viol" | sort -u
   exit 1
 fi
-for must in "Erdos364.no_powerful_triple_up_to_1e12' depends" "Erdos364.no_powerful_triple_up_to_1e14' depends"; do
-  if ! echo "$out" | grep -q "$must"; then
-    echo "AXIOM GATE: FAIL: headline theorem missing from the manifest output: $must"; exit 1
-  fi
-done
+if [ "${HEADLINE:-0}" = "1" ]; then
+  out2=$(lake env lean Erdos364/AxiomCheckHeadline.lean 2>&1) || { echo "$out2"; echo "AXIOM GATE: FAIL (AxiomCheckHeadline.lean did not compile: headline modules not built)"; exit 1; }
+  for must in "Erdos364.no_powerful_triple_up_to_1e12' depends" "Erdos364.no_powerful_triple_up_to_1e14' depends"; do
+    echo "$out2" | grep -q "$must" || { echo "AXIOM GATE: FAIL: headline theorem missing: $must"; exit 1; }
+  done
+  echo "$out2" | grep -qE "sorryAx|_native" && { echo "AXIOM GATE: FAIL: sorryAx or native axiom in a headline theorem"; exit 1; }
+  echo "$out2" | grep "depends on" | sed 's/.*depends on axioms: //' | tr -d '[]' | tr ',' '\n' | sed 's/ //g' | grep -vE '^(propext|Classical\.choice|Quot\.sound)$' | grep -q . && { echo "AXIOM GATE: FAIL: disallowed axiom in a headline theorem"; exit 1; }
+  echo "AXIOM GATE: headline theorems checked (10^12 and 10^14): PASS"
+else
+  echo "AXIOM GATE: root closure only; headline theorems are checked by the certificates workflow (HEADLINE=1)"
+fi
 if echo "$out" | grep -qE "sorryAx|_native"; then
   echo "AXIOM GATE: FAIL: sorryAx or native axiom present"
   exit 1

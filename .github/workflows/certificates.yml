@@ -1,0 +1,37 @@
+name: certificates
+
+# Builds the two headline theorems and every certificate chunk they import
+# (320 for 10^12, 3,204 for 10^14), then runs the axiom gate over them.
+# Measured 2026-09-15: about 23 CPU-seconds per chunk, so roughly 5.5 hours
+# on a 4-vCPU hosted runner; the hosted job limit is 6 hours. Weekly and on
+# demand. The on-push workflow (gate.yml) checks only the root module's
+# import closure in a few minutes.
+on:
+  schedule:
+    - cron: "0 3 * * 1"
+  workflow_dispatch:
+
+jobs:
+  certificates:
+    runs-on: ubuntu-latest
+    timeout-minutes: 355
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install elan
+        run: |
+          curl -sSf https://elan.lean-lang.org/elan-init.sh | \
+            sh -s -- -y --default-toolchain leanprover/lean4:v4.30.0
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+      - name: Cache lake packages
+        uses: actions/cache@v4
+        with:
+          path: .lake
+          key: lake-${{ runner.os }}-${{ hashFiles('lake-manifest.json', 'lean-toolchain') }}
+      - name: Fetch mathlib cache
+        run: lake exe cache get
+      - name: Build the 10^12 theorem and its certificates
+        run: lake build Erdos364.Main
+      - name: Build the 10^14 theorem and its certificates
+        run: lake build Erdos364.Main14
+      - name: Axiom gate over both headline theorems
+        run: HEADLINE=1 scripts/axiom_gate.sh
