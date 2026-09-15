@@ -43,6 +43,11 @@ if [ -n "$viol" ]; then
   echo "$viol" | sort -u
   exit 1
 fi
+for must in "Erdos364.no_powerful_triple_up_to_1e12' depends" "Erdos364.no_powerful_triple_up_to_1e14' depends"; do
+  if ! echo "$out" | grep -q "$must"; then
+    echo "AXIOM GATE: FAIL: headline theorem missing from the manifest output: $must"; exit 1
+  fi
+done
 if echo "$out" | grep -qE "sorryAx|_native"; then
   echo "AXIOM GATE: FAIL: sorryAx or native axiom present"
   exit 1
