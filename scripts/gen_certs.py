@@ -22,7 +22,7 @@ from scan import powerful_upto  # noqa: E402
 HEADER = """/-
 Copyright (c) 2026 Millennium Research. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Millennium Research (Ibby Mian), with Claude
+Authors: Millennium Research (Ibrahim Mian)
 -/
 """
 

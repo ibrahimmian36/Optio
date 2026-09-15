@@ -1,9 +1,11 @@
 /-
 Copyright (c) 2026 Millennium Research. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Millennium Research (Ibby Mian), with Claude
+Authors: Millennium Research (Ibrahim Mian)
 -/
 import Erdos364.Mod4
+import Erdos364.Main
+import Erdos364.Main14
 import Erdos364.Witness
 import Erdos364.Tiling
 import Erdos364.Representation
@@ -97,3 +99,8 @@ second gate layer (Phase 2 step 8). -/
 #print axioms Erdos364.no_powerful_triple_up_to_1e14_of
 #print axioms Erdos364.bounded_of_erdos364
 #print axioms Erdos364.erdos364_false_of_witness
+
+-- The two unconditional headline theorems. If either module is not built, this
+-- file does not compile and the gate fails: the gate cannot pass on the root closure alone.
+#print axioms Erdos364.no_powerful_triple_up_to_1e12
+#print axioms Erdos364.no_powerful_triple_up_to_1e14
