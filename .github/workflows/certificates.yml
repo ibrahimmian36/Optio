@@ -1,20 +1,28 @@
 name: certificates
 
 # Builds the two headline theorems and every certificate chunk they import
-# (320 for 10^12, 3,204 for 10^14), then runs the axiom gate over them.
-# Measured 2026-09-15: about 23 CPU-seconds per chunk, so roughly 5.5 hours
-# on a 4-vCPU hosted runner; the hosted job limit is 6 hours. Weekly and on
-# demand. The on-push workflow (gate.yml) checks only the root module's
-# import closure in a few minutes.
+# (320 for 10^12, 3,204 for 10^14) and runs the axiom gate over them.
+# First attempt (run 35043411074) built chunks with Lake's full parallelism
+# and was killed (exit 143) after 194 chunks as per-chunk time rose from 7 s
+# to 140 s: memory exhaustion on a 16 GB runner. Now: chunks are leaves, built
+# two at a time, split across shards; a final job assembles and gates.
+# Weekly and on demand; the on-push gate.yml checks the root closure in minutes.
 on:
   schedule:
     - cron: "0 3 * * 1"
   workflow_dispatch:
 
+env:
+  SHARDS: 8
+
 jobs:
-  certificates:
+  chunks:
     runs-on: ubuntu-latest
-    timeout-minutes: 355
+    timeout-minutes: 340
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [0, 1, 2, 3, 4, 5, 6, 7]
     steps:
       - uses: actions/checkout@v4
       - name: Install elan
@@ -22,16 +30,69 @@ jobs:
           curl -sSf https://elan.lean-lang.org/elan-init.sh | \
             sh -s -- -y --default-toolchain leanprover/lean4:v4.30.0
           echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
-      - name: Cache lake packages
-        uses: actions/cache@v4
-        with:
-          path: .lake
-          key: lake-${{ runner.os }}-${{ hashFiles('lake-manifest.json', 'lean-toolchain') }}
       - name: Fetch mathlib cache
         run: lake exe cache get
-      - name: Build the 10^12 theorem and its certificates
-        run: lake build Erdos364.Main
-      - name: Build the 10^14 theorem and its certificates
-        run: lake build Erdos364.Main14
+      - name: Build the root closure (shared dependencies)
+        run: lake build
+      - name: Build C12 leaves for this shard (two at a time)
+        run: bash scripts/lake_build_batched.sh . Erdos364/C12 2 ${{ matrix.shard }} $SHARDS
+      - name: Build C14 leaves for this shard (two at a time)
+        run: bash scripts/lake_build_batched.sh . Erdos364/C14 2 ${{ matrix.shard }} $SHARDS
+      - name: Save this shard's certificate oleans
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            .lake/build/lib/lean/Erdos364/C12
+            .lake/build/lib/lean/Erdos364/C14
+            .lake/build/ir/Erdos364/C12
+            .lake/build/ir/Erdos364/C14
+          key: certs-${{ github.sha }}-shard-${{ matrix.shard }}
+
+  assemble:
+    needs: chunks
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install elan
+        run: |
+          curl -sSf https://elan.lean-lang.org/elan-init.sh | \
+            sh -s -- -y --default-toolchain leanprover/lean4:v4.30.0
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+      - name: Fetch mathlib cache
+        run: lake exe cache get
+      - name: Build the root closure
+        run: lake build
+      - name: Restore shard 0
+        uses: actions/cache/restore@v4
+        with: { path: ".lake/build/lib/lean/Erdos364/C12\n.lake/build/lib/lean/Erdos364/C14\n.lake/build/ir/Erdos364/C12\n.lake/build/ir/Erdos364/C14", key: "certs-${{ github.sha }}-shard-0", fail-on-cache-miss: true }
+      - name: Restore shard 1
+        uses: actions/cache/restore@v4
+        with: { path: ".lake/build/lib/lean/Erdos364/C12\n.lake/build/lib/lean/Erdos364/C14\n.lake/build/ir/Erdos364/C12\n.lake/build/ir/Erdos364/C14", key: "certs-${{ github.sha }}-shard-1", fail-on-cache-miss: true }
+      - name: Restore shard 2
+        uses: actions/cache/restore@v4
+        with: { path: ".lake/build/lib/lean/Erdos364/C12\n.lake/build/lib/lean/Erdos364/C14\n.lake/build/ir/Erdos364/C12\n.lake/build/ir/Erdos364/C14", key: "certs-${{ github.sha }}-shard-2", fail-on-cache-miss: true }
+      - name: Restore shard 3
+        uses: actions/cache/restore@v4
+        with: { path: ".lake/build/lib/lean/Erdos364/C12\n.lake/build/lib/lean/Erdos364/C14\n.lake/build/ir/Erdos364/C12\n.lake/build/ir/Erdos364/C14", key: "certs-${{ github.sha }}-shard-3", fail-on-cache-miss: true }
+      - name: Restore shard 4
+        uses: actions/cache/restore@v4
+        with: { path: ".lake/build/lib/lean/Erdos364/C12\n.lake/build/lib/lean/Erdos364/C14\n.lake/build/ir/Erdos364/C12\n.lake/build/ir/Erdos364/C14", key: "certs-${{ github.sha }}-shard-4", fail-on-cache-miss: true }
+      - name: Restore shard 5
+        uses: actions/cache/restore@v4
+        with: { path: ".lake/build/lib/lean/Erdos364/C12\n.lake/build/lib/lean/Erdos364/C14\n.lake/build/ir/Erdos364/C12\n.lake/build/ir/Erdos364/C14", key: "certs-${{ github.sha }}-shard-5", fail-on-cache-miss: true }
+      - name: Restore shard 6
+        uses: actions/cache/restore@v4
+        with: { path: ".lake/build/lib/lean/Erdos364/C12\n.lake/build/lib/lean/Erdos364/C14\n.lake/build/ir/Erdos364/C12\n.lake/build/ir/Erdos364/C14", key: "certs-${{ github.sha }}-shard-6", fail-on-cache-miss: true }
+      - name: Restore shard 7
+        uses: actions/cache/restore@v4
+        with: { path: ".lake/build/lib/lean/Erdos364/C12\n.lake/build/lib/lean/Erdos364/C14\n.lake/build/ir/Erdos364/C12\n.lake/build/ir/Erdos364/C14", key: "certs-${{ github.sha }}-shard-7", fail-on-cache-miss: true }
+      - name: Every chunk olean present?
+        run: |
+          c12=$(ls .lake/build/lib/lean/Erdos364/C12/*.olean | wc -l); c14=$(ls .lake/build/lib/lean/Erdos364/C14/*.olean | wc -l)
+          echo "C12 oleans $c12 of $(ls Erdos364/C12/*.lean | wc -l); C14 oleans $c14 of $(ls Erdos364/C14/*.lean | wc -l)"
+          test "$c12" = "$(ls Erdos364/C12/*.lean | wc -l)" && test "$c14" = "$(ls Erdos364/C14/*.lean | wc -l)"
+      - name: Build the headline theorems (aggregators only; chunks are cached)
+        run: lake build Erdos364.Main Erdos364.Main14
       - name: Axiom gate over both headline theorems
         run: HEADLINE=1 scripts/axiom_gate.sh
