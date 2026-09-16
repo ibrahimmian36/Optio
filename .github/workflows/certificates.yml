@@ -1,12 +1,20 @@
 name: certificates
 
-# Builds the two headline theorems and every certificate chunk they import
-# (320 for 10^12, 3,204 for 10^14) and runs the axiom gate over them.
-# First attempt (run 35043411074) built chunks with Lake's full parallelism
-# and was killed (exit 143) after 194 chunks as per-chunk time rose from 7 s
-# to 140 s: memory exhaustion on a 16 GB runner. Now: chunks are leaves, built
-# two at a time, split across shards; a final job assembles and gates.
-# Weekly and on demand; the on-push gate.yml checks the root closure in minutes.
+# Builds every certificate chunk (320 for 10^12, 3,204 for 10^14), the 10^12
+# headline theorem and the 10^14 chunk composition, and runs the axiom gate
+# over them. Chunks are leaves built two at a time across eight shards; each
+# shard's oleans are cached under a key derived from the Lean sources, so a
+# run with unchanged sources reuses them instead of spending 14 CPU-hours.
+# The final job restores all eight caches and builds the aggregators.
+#
+# What this workflow cannot build: Erdos364.Main14's one-time kernel check of
+# the 10^14 rung table (bTable1e14_eq) needs tens of GB. On a 16 GB hosted
+# runner it is killed (exit 143; run 35045774922, every shard green, the
+# aggregator C14 built in 11 s, Main14 killed after 4.6 min). That module is
+# built by scripts/pod_final14.sh on a 64 GB machine and its axiom record is
+# committed at data/chunk_runs/cert_1e14_axioms.txt, which the gate re-checks.
+# History: run 35043411074 used Lake's full parallelism and was killed after
+# 194 chunks (per-chunk time rose from 7 s to 140 s: memory exhaustion).
 on:
   schedule:
     - cron: "0 3 * * 1"
@@ -25,20 +33,40 @@ jobs:
         shard: [0, 1, 2, 3, 4, 5, 6, 7]
     steps:
       - uses: actions/checkout@v4
+      - name: Cache key from the Lean sources
+        id: key
+        run: echo "key=certs-${{ hashFiles('Erdos364/**/*.lean', 'lean-toolchain', 'lake-manifest.json', 'lakefile.toml') }}" >> "$GITHUB_OUTPUT"
+      - name: Is this shard already cached?
+        id: probe
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            .lake/build/lib/lean/Erdos364/C12
+            .lake/build/lib/lean/Erdos364/C14
+            .lake/build/ir/Erdos364/C12
+            .lake/build/ir/Erdos364/C14
+          key: ${{ steps.key.outputs.key }}-shard-${{ matrix.shard }}
+          lookup-only: true
       - name: Install elan
+        if: steps.probe.outputs.cache-hit != 'true'
         run: |
           curl -sSf https://elan.lean-lang.org/elan-init.sh | \
             sh -s -- -y --default-toolchain leanprover/lean4:v4.30.0
           echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
       - name: Fetch mathlib cache
+        if: steps.probe.outputs.cache-hit != 'true'
         run: lake exe cache get
       - name: Build the root closure (shared dependencies)
+        if: steps.probe.outputs.cache-hit != 'true'
         run: lake build
       - name: Build C12 leaves for this shard (two at a time)
+        if: steps.probe.outputs.cache-hit != 'true'
         run: bash scripts/lake_build_batched.sh . Erdos364/C12 2 ${{ matrix.shard }} $SHARDS
       - name: Build C14 leaves for this shard (two at a time)
+        if: steps.probe.outputs.cache-hit != 'true'
         run: bash scripts/lake_build_batched.sh . Erdos364/C14 2 ${{ matrix.shard }} $SHARDS
       - name: Save this shard's certificate oleans
+        if: steps.probe.outputs.cache-hit != 'true'
         uses: actions/cache/save@v4
         with:
           path: |
@@ -46,7 +74,7 @@ jobs:
             .lake/build/lib/lean/Erdos364/C14
             .lake/build/ir/Erdos364/C12
             .lake/build/ir/Erdos364/C14
-          key: certs-${{ github.sha }}-shard-${{ matrix.shard }}
+          key: ${{ steps.key.outputs.key }}-shard-${{ matrix.shard }}
 
   assemble:
     needs: chunks
@@ -54,6 +82,9 @@ jobs:
     timeout-minutes: 120
     steps:
       - uses: actions/checkout@v4
+      - name: Cache key from the Lean sources
+        id: key
+        run: echo "key=certs-${{ hashFiles('Erdos364/**/*.lean', 'lean-toolchain', 'lake-manifest.json', 'lakefile.toml') }}" >> "$GITHUB_OUTPUT"
       - name: Install elan
         run: |
           curl -sSf https://elan.lean-lang.org/elan-init.sh | \
@@ -65,34 +96,90 @@ jobs:
         run: lake build
       - name: Restore shard 0
         uses: actions/cache/restore@v4
-        with: { path: ".lake/build/lib/lean/Erdos364/C12\n.lake/build/lib/lean/Erdos364/C14\n.lake/build/ir/Erdos364/C12\n.lake/build/ir/Erdos364/C14", key: "certs-${{ github.sha }}-shard-0", fail-on-cache-miss: true }
+        with:
+          path: |
+            .lake/build/lib/lean/Erdos364/C12
+            .lake/build/lib/lean/Erdos364/C14
+            .lake/build/ir/Erdos364/C12
+            .lake/build/ir/Erdos364/C14
+          key: ${{ steps.key.outputs.key }}-shard-0
+          fail-on-cache-miss: true
       - name: Restore shard 1
         uses: actions/cache/restore@v4
-        with: { path: ".lake/build/lib/lean/Erdos364/C12\n.lake/build/lib/lean/Erdos364/C14\n.lake/build/ir/Erdos364/C12\n.lake/build/ir/Erdos364/C14", key: "certs-${{ github.sha }}-shard-1", fail-on-cache-miss: true }
+        with:
+          path: |
+            .lake/build/lib/lean/Erdos364/C12
+            .lake/build/lib/lean/Erdos364/C14
+            .lake/build/ir/Erdos364/C12
+            .lake/build/ir/Erdos364/C14
+          key: ${{ steps.key.outputs.key }}-shard-1
+          fail-on-cache-miss: true
       - name: Restore shard 2
         uses: actions/cache/restore@v4
-        with: { path: ".lake/build/lib/lean/Erdos364/C12\n.lake/build/lib/lean/Erdos364/C14\n.lake/build/ir/Erdos364/C12\n.lake/build/ir/Erdos364/C14", key: "certs-${{ github.sha }}-shard-2", fail-on-cache-miss: true }
+        with:
+          path: |
+            .lake/build/lib/lean/Erdos364/C12
+            .lake/build/lib/lean/Erdos364/C14
+            .lake/build/ir/Erdos364/C12
+            .lake/build/ir/Erdos364/C14
+          key: ${{ steps.key.outputs.key }}-shard-2
+          fail-on-cache-miss: true
       - name: Restore shard 3
         uses: actions/cache/restore@v4
-        with: { path: ".lake/build/lib/lean/Erdos364/C12\n.lake/build/lib/lean/Erdos364/C14\n.lake/build/ir/Erdos364/C12\n.lake/build/ir/Erdos364/C14", key: "certs-${{ github.sha }}-shard-3", fail-on-cache-miss: true }
+        with:
+          path: |
+            .lake/build/lib/lean/Erdos364/C12
+            .lake/build/lib/lean/Erdos364/C14
+            .lake/build/ir/Erdos364/C12
+            .lake/build/ir/Erdos364/C14
+          key: ${{ steps.key.outputs.key }}-shard-3
+          fail-on-cache-miss: true
       - name: Restore shard 4
         uses: actions/cache/restore@v4
-        with: { path: ".lake/build/lib/lean/Erdos364/C12\n.lake/build/lib/lean/Erdos364/C14\n.lake/build/ir/Erdos364/C12\n.lake/build/ir/Erdos364/C14", key: "certs-${{ github.sha }}-shard-4", fail-on-cache-miss: true }
+        with:
+          path: |
+            .lake/build/lib/lean/Erdos364/C12
+            .lake/build/lib/lean/Erdos364/C14
+            .lake/build/ir/Erdos364/C12
+            .lake/build/ir/Erdos364/C14
+          key: ${{ steps.key.outputs.key }}-shard-4
+          fail-on-cache-miss: true
       - name: Restore shard 5
         uses: actions/cache/restore@v4
-        with: { path: ".lake/build/lib/lean/Erdos364/C12\n.lake/build/lib/lean/Erdos364/C14\n.lake/build/ir/Erdos364/C12\n.lake/build/ir/Erdos364/C14", key: "certs-${{ github.sha }}-shard-5", fail-on-cache-miss: true }
+        with:
+          path: |
+            .lake/build/lib/lean/Erdos364/C12
+            .lake/build/lib/lean/Erdos364/C14
+            .lake/build/ir/Erdos364/C12
+            .lake/build/ir/Erdos364/C14
+          key: ${{ steps.key.outputs.key }}-shard-5
+          fail-on-cache-miss: true
       - name: Restore shard 6
         uses: actions/cache/restore@v4
-        with: { path: ".lake/build/lib/lean/Erdos364/C12\n.lake/build/lib/lean/Erdos364/C14\n.lake/build/ir/Erdos364/C12\n.lake/build/ir/Erdos364/C14", key: "certs-${{ github.sha }}-shard-6", fail-on-cache-miss: true }
+        with:
+          path: |
+            .lake/build/lib/lean/Erdos364/C12
+            .lake/build/lib/lean/Erdos364/C14
+            .lake/build/ir/Erdos364/C12
+            .lake/build/ir/Erdos364/C14
+          key: ${{ steps.key.outputs.key }}-shard-6
+          fail-on-cache-miss: true
       - name: Restore shard 7
         uses: actions/cache/restore@v4
-        with: { path: ".lake/build/lib/lean/Erdos364/C12\n.lake/build/lib/lean/Erdos364/C14\n.lake/build/ir/Erdos364/C12\n.lake/build/ir/Erdos364/C14", key: "certs-${{ github.sha }}-shard-7", fail-on-cache-miss: true }
+        with:
+          path: |
+            .lake/build/lib/lean/Erdos364/C12
+            .lake/build/lib/lean/Erdos364/C14
+            .lake/build/ir/Erdos364/C12
+            .lake/build/ir/Erdos364/C14
+          key: ${{ steps.key.outputs.key }}-shard-7
+          fail-on-cache-miss: true
       - name: Every chunk olean present?
         run: |
           c12=$(ls .lake/build/lib/lean/Erdos364/C12/*.olean | wc -l); c14=$(ls .lake/build/lib/lean/Erdos364/C14/*.olean | wc -l)
           echo "C12 oleans $c12 of $(ls Erdos364/C12/*.lean | wc -l); C14 oleans $c14 of $(ls Erdos364/C14/*.lean | wc -l)"
           test "$c12" = "$(ls Erdos364/C12/*.lean | wc -l)" && test "$c14" = "$(ls Erdos364/C14/*.lean | wc -l)"
-      - name: Build the headline theorems (aggregators only; chunks are cached)
-        run: lake build Erdos364.Main Erdos364.Main14
-      - name: Axiom gate over both headline theorems
+      - name: Build the 10^12 headline and the 10^14 chunk composition (chunks are cached)
+        run: lake build Erdos364.Main Erdos364.C14
+      - name: Axiom gate over the certificate modules
         run: HEADLINE=1 scripts/axiom_gate.sh

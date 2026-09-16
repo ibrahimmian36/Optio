@@ -19,6 +19,10 @@
 # large-memory machine; their axiom records are the committed pod outputs
 # in data/chunk_runs/cert_1e12_axioms.txt and cert_1e14_axioms.txt. This
 # gate re-checks those two records textually as a third, weaker layer.
+# With HEADLINE=1 (the certificates workflow, chunks built) it also prints
+# the axioms of the 10^12 headline, the 10^14 chunk composition and the
+# conditional 10^14 headline via AxiomCheckHeadline.lean. Main14 itself
+# (the rung-table kernel check, tens of GB) is outside a hosted runner.
 #
 # Usage: scripts/axiom_gate.sh    (exits 0 on PASS, 1 on FAIL)
 set -uo pipefail
@@ -45,14 +49,15 @@ if [ -n "$viol" ]; then
 fi
 if [ "${HEADLINE:-0}" = "1" ]; then
   out2=$(lake env lean Erdos364/AxiomCheckHeadline.lean 2>&1) || { echo "$out2"; echo "AXIOM GATE: FAIL (AxiomCheckHeadline.lean did not compile: headline modules not built)"; exit 1; }
-  for must in "Erdos364.no_powerful_triple_up_to_1e12' depends" "Erdos364.no_powerful_triple_up_to_1e14' depends"; do
-    echo "$out2" | grep -q "$must" || { echo "AXIOM GATE: FAIL: headline theorem missing: $must"; exit 1; }
+  echo "$out2"
+  for must in Erdos364.no_powerful_triple_up_to_1e12 Erdos364.C14.all_chunks_pass Erdos364.no_powerful_triple_up_to_1e14_of; do
+    echo "$out2" | grep -q "'$must'" || { echo "AXIOM GATE: FAIL: certificate theorem missing: $must"; exit 1; }
   done
   echo "$out2" | grep -qE "sorryAx|_native" && { echo "AXIOM GATE: FAIL: sorryAx or native axiom in a headline theorem"; exit 1; }
   echo "$out2" | grep "depends on" | sed 's/.*depends on axioms: //' | tr -d '[]' | tr ',' '\n' | sed 's/ //g' | grep -vE '^(propext|Classical\.choice|Quot\.sound)$' | grep -q . && { echo "AXIOM GATE: FAIL: disallowed axiom in a headline theorem"; exit 1; }
-  echo "AXIOM GATE: headline theorems checked (10^12 and 10^14): PASS"
+  echo "AXIOM GATE: certificate modules checked (10^12 headline, 10^14 chunk composition and conditional headline): PASS"
 else
-  echo "AXIOM GATE: root closure only; headline theorems are checked by the certificates workflow (HEADLINE=1)"
+  echo "AXIOM GATE: root closure only; the certificate modules are checked by the certificates workflow (HEADLINE=1)"
 fi
 if echo "$out" | grep -qE "sorryAx|_native"; then
   echo "AXIOM GATE: FAIL: sorryAx or native axiom present"
