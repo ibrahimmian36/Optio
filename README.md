@@ -23,7 +23,7 @@ that is checked end to end by a proof kernel.
         ∀ n : ℕ, n + 2 ≤ 10^14 →
           ¬ (Powerful n ∧ Powerful (n+1) ∧ Powerful (n+2))
 
-What CI checks: the `axiom gate` workflow runs on every push and checks the root module's import closure (the soundness library and the conditional theorems) in a few minutes; the `certificates` workflow runs weekly and on demand, builds `Erdos364.Main` and `Erdos364.Main14` with their 320 and 3,204 certificate chunks (about five and a half hours on a hosted runner), and prints the axioms of both unconditional theorems. Both compile in Lean 4.30.0 / mathlib v4.30.0 with axioms exactly
+What CI checks: the `axiom gate` workflow runs on every push and checks the root module's import closure (the soundness library and the conditional theorems) in a few minutes; the `certificates` workflow runs weekly and on demand, builds all 320 and 3,204 certificate chunks across eight shards (about two hours wall-clock, cached by source hash), then `Erdos364.Main` (the unconditional 10^12 theorem) and `Erdos364.C14` (the composition of the 10^14 chunks), and prints their axioms together with those of the conditional 10^14 theorem. The one step a 16 GB runner cannot do is `Erdos364.Main14`'s kernel check of the 10^14 rung table, which needs tens of GB; that module is built by `scripts/pod_final14.sh` on a 64 GB machine and its committed axiom record is what the gate re-checks. Both compile in Lean 4.30.0 / mathlib v4.30.0 with axioms exactly
 `{propext, Classical.choice, Quot.sound}`: no `sorry`, no `native_decide`,
 no extra axioms. `Powerful` is carried byte-identically from
 google-deepmind/formal-conjectures (commit `e923379e6`, pinned in
@@ -86,7 +86,9 @@ it on every push. The certificate modules themselves (`C12`, `C14`,
 `Main`, `Main14`) need roughly 46 CPU-hours (16 at 10^12, 30 at 10^14);
 per-chunk memory peaks in the committed logs reach 7.9 GB, and the
 one-time 10^14 table verification wants tens of GB free, so
-`scripts/pod_final14.sh` reproduces the 10^14 build on a 64 GB machine.
+`scripts/pod_final14.sh` reproduces the 10^14 build on a 64 GB machine
+(the `certificates` workflow reproduces everything but that table check
+on hosted runners).
 Their `#print axioms` outputs are committed at
 `data/chunk_runs/cert_1e12_axioms.txt` and `cert_1e14_axioms.txt`, with
 build and batch logs alongside. Note that the committed build logs end at
