@@ -67,7 +67,7 @@ the integral): full 10^12 is roughly 4-7 hours sequential, 1.5-3 hours at
 is minutes. 10^13 extrapolates to days without the optimization pass; 10^14
 is out of reach until the top-end cost is understood and reduced.
 
-## Smoke rung result (approved ladder, run 2026-07-22)
+## Smoke rung result (run 2026-07-22)
 
 10^10 in 32 entry-balanced chunks, parallelism 3: ALL PASS. Summed wall 218s,
 slowest chunk 9s, peak RSS 2.0 GB (data/chunk_runs/1e10.log). The 10^12 set
@@ -86,10 +86,11 @@ not. Certificate-scale batches move to a large-RAM pod (64 GB+, ~8-way,
 whole set in roughly 1-2 hours); the driver's resumability means nothing is
 lost either way.
 
-## Recommendation
+## Ladder
 
-Approve the ladder as: 10^10 smoke rung now, 10^12 as the first published
-rung (overnight run, current code), 10^13 and 10^14 deferred until the
-Phase 2 optimization pass reprices them. All spike theorems check with
+The ladder adopted from these measurements: 10^10 smoke rung first, 10^12 as
+the first certified rung (current code), 10^13 and 10^14 deferred until the
+optimization pass repriced them (the table-driven checker later brought
+10^14 within reach; see `COST_ATTRIBUTION.md`). All spike theorems check with
 axioms {propext} only (decide produces no Classical dependencies here);
 the gate criteria are met by construction, formal gate lands in Phase 2.

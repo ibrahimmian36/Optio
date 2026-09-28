@@ -1,0 +1,38 @@
+cff-version: 1.2.0
+message: "If you use this work, please cite the paper below."
+title: "Optio: kernel-certified verification of the Erdős-Mollin-Walsh conjecture below 10^14"
+type: software
+authors:
+  - given-names: Ibrahim
+    family-names: Mian
+    affiliation: Millennium Research
+  - given-names: Shayaan
+    family-names: Siddique
+    affiliation: Millennium Research
+repository-code: "https://github.com/ibrahimmian36/Optio"
+url: "https://arxiv.org/abs/2609.25011"
+license: Apache-2.0
+keywords:
+  - Erdős problems
+  - powerful numbers
+  - Lean 4
+  - formal verification
+  - proof certificates
+preferred-citation:
+  type: article
+  title: "A Kernel-Certified Verification of the Erdős-Mollin-Walsh Conjecture below 10^14"
+  authors:
+    - given-names: Ibrahim
+      family-names: Mian
+      affiliation: Millennium Research
+    - given-names: Shayaan
+      family-names: Siddique
+      affiliation: Millennium Research
+  year: 2026
+  repository-code: "https://github.com/ibrahimmian36/Optio"
+  url: "https://arxiv.org/abs/2609.25011"
+  identifiers:
+    - type: other
+      value: "arXiv:2609.25011"
+      description: "arXiv identifier"
+  journal: "arXiv preprint"

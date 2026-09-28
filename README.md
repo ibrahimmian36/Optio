@@ -2,6 +2,7 @@
 
 [![axiom gate](https://github.com/ibrahimmian36/Optio/actions/workflows/gate.yml/badge.svg)](https://github.com/ibrahimmian36/Optio/actions/workflows/gate.yml)
 [![certificates](https://github.com/ibrahimmian36/Optio/actions/workflows/certificates.yml/badge.svg)](https://github.com/ibrahimmian36/Optio/actions/workflows/certificates.yml)
+[![arXiv](https://img.shields.io/badge/arXiv-2609.25011-b31b1b.svg)](https://arxiv.org/abs/2609.25011)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 [![axioms](https://img.shields.io/badge/axioms-propext%20%7C%20Classical.choice%20%7C%20Quot.sound-success)](#the-certified-results)
 
@@ -12,6 +13,11 @@ conjectured there are none; the abc conjecture implies at most finitely
 many. The conjecture is open. This repository does not solve it. What it
 contains is the first verification of the conjecture at any finite bound
 that is checked end to end by a proof kernel.
+
+Paper: Ibrahim Mian and Shayaan Siddique (Millennium Research), *A
+Kernel-Certified Verification of the Erdős-Mollin-Walsh Conjecture below
+10^14*, [arXiv:2609.25011](https://arxiv.org/abs/2609.25011). See
+[Citing](#citing).
 
 ## The certified results
 
@@ -113,7 +119,7 @@ certified closure.
     engine/     Python enumeration and cross-validation (ruff, mypy
                 --strict, pytest)
     scripts/    generators, batch drivers, axiom gate, pod scripts
-    docs/       program documents, measurements, run ledger
+    docs/       proof plan, measurements, run ledger
     data/       scan ledger, chunk-run logs, certificate axiom records
 
 ## Citations
@@ -136,6 +142,23 @@ arXiv:2507.16828. Erdős problem catalogue: erdosproblems.com/364 (T. F.
 Bloom). Formal statement: google-deepmind/formal-conjectures,
 FormalConjectures/ErdosProblems/364.lean, commit e923379e6.
 
+## Citing
+
+If you use this work, please cite the paper (`CITATION.cff` carries the
+same metadata, shown by GitHub as "Cite this repository"):
+
+    @misc{mian2026erdos364,
+      author        = {Mian, Ibrahim and Siddique, Shayaan},
+      title         = {A Kernel-Certified Verification of the
+                       {Erd\H{o}s}--{Mollin}--{Walsh} Conjecture below $10^{14}$},
+      year          = {2026},
+      eprint        = {2609.25011},
+      archivePrefix = {arXiv},
+      primaryClass  = {math.GM},
+      url           = {https://arxiv.org/abs/2609.25011}
+    }
+
 ## License
 
-Apache 2.0.
+Apache 2.0 (see `LICENSE`). Copyright 2026 Millennium Research (Ibrahim
+Mian, Shayaan Siddique).

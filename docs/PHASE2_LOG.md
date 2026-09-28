@@ -1,4 +1,7 @@
-# Phase 2 running log
+# Run ledger (phases 2-7)
+
+Dated proof and build milestones, including every failure hit on the way and
+its fix.
 
 - step 1 Mod4.lean: not_powerful_of_two_mod_four, odd_of_powerful_triple — PROVED, gate-clean
 - step 6 Witness.lean: generic witness lemma + five 10^12 middle kills — PROVED, gate-clean
@@ -17,4 +20,3 @@
 - 10^14 kernel batch COMPLETE on pod: 3204/3204 PASS, 0 fail, indices exactly match c14_specs.json; 107,603 kernel-s (~30 CPU-h), max chunk 61s, peak 6.9GB; log data/chunk_runs/T14_pod.log
 - 10^14 RUNG CERTIFIED 2026-07-23: no_powerful_triple_up_to_1e14 axioms exactly {propext, Classical.choice, Quot.sound}, no sorry; root causes fixed en route: doc-comment/set_option parse trap (again) + default maxHeartbeats aborting the table eq + pod_phase7.sh grep-masking that failure as success; evidence cert_1e14_axioms.txt + cert_build_1e14.log (3204 modules)
 - CLOSEOUT (steps 8-9) DONE 2026-07-23: AxiomAudit (260 thms mechanical), manifest at 61, 3-layer gate PASS incl. certificate records, CI workflow, Bridge.lean (pinned upstream commit + abstract implication), final two-tier README; certified-closure Lean sources FROZEN as attested
-- 2026-07-23: repository made public

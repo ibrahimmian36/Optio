@@ -3,7 +3,7 @@
 Millennium Research, 2026-07-22. Plan and results for attributing the
 per-chunk kernel cost before building any optimization. No optimization is
 designed or written until the numbers below are measured. All runs local,
-no large-memory machine. Nothing here touches the certified path: the variants
+on the laptop. Nothing here touches the certified path: the variants
 live in a module the library root does not import, they prove nothing, and
 their assertions are equalities against Python-mirrored values, not
 correctness claims.
@@ -90,7 +90,7 @@ entry-bound not kb-bound after the table, roughly 15-20 pod-hours at
 8-way instead of the ~100x brute-force blowup. A merge redesign
 is NOT scheduled: its cost is entry-proportional and chunking-invariant,
 the pod absorbs it, and new soundness surface for a second optimization is
-not worth it at this rung. Revisit only if 10^14 pricing on the pod comes
+not worth it at this rung. Revisit only if 10^14 timing on the pod comes
 in materially worse than projected.
 
 ## Postscript (phase 5 measured, same day)

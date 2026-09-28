@@ -1,12 +1,12 @@
 # Erdős 364 — the complete proof plan
 
-Millennium Research, 2026-07-22. This is the step-by-step path from the
-current state (Phase 1 complete, overnight 10^12 chunk run launched) to the
-published result. Honesty note kept in view throughout: the deliverable is
-the first kernel-certified bounded verification of the Erdős-Mollin-Walsh
-conjecture, not a proof of the conjecture, which no finite computation can
-give. Each step below states what is proved, why it is needed, and its
-acceptance test.
+Millennium Research, 2026-07-22. The lemma-level plan the certified result
+was built from, written after the Phase 1 measurements; every step below is
+now implemented in `Erdos364/`. Scope: the deliverable is the first
+kernel-certified bounded verification of the Erdős-Mollin-Walsh conjecture,
+not a proof of the conjecture, which no finite computation can give. Each
+step below states what is proved, why it is needed, and its acceptance
+test.
 
 ## The target theorem, per ladder rung X
 
@@ -15,7 +15,7 @@ acceptance test.
 
 with Powerful carried verbatim from formal-conjectures (pinned commit
 e923379e6), axioms ⊆ {propext, Classical.choice, Quot.sound}, no
-native_decide, no sorry. Rungs: X = 10^10 (smoke), 10^12 (first published),
+native_decide, no sorry. Rungs: X = 10^10 (smoke), 10^12 (first certified),
 10^13/10^14 (after the optimization pass).
 
 ## Proof architecture in one paragraph
@@ -38,7 +38,7 @@ and each pair's middle is killed by an explicit non-powerfulness witness
 If n were even, one of n, n+2 is 2 mod 4, and a 2 mod 4 number has 2 in its
 prime factors without 4 dividing it. Upstream's proved quadruple variant
 uses exactly this tool (not_full_of_prime_mod_prime_sq); we reprove locally
-to stay self-contained. Acceptance: compiles, gate-clean. Effort: hours.
+to stay self-contained. Acceptance: compiles, gate-clean.
 
 ## Step 2 — representation lemma (the substantive mathematics)
 
@@ -52,8 +52,7 @@ once; oddness is inherited. Also the uniqueness direction is not needed:
 duplicates in the enumeration are harmless because merge keeps them adjacent
 and the scan logic tolerates them. This is the one lemma with real
 mathematical content; mathlib's Finsupp/factorization API carries it.
-Acceptance: compiles against mathlib v4.30.0, gate-clean. Effort: 1-2 days,
-the long pole of Phase 2.
+Acceptance: compiles against mathlib v4.30.0, gate-clean.
 
 ## Step 3 — generator completeness (checker soundness, part 1)
 
@@ -68,7 +67,7 @@ lemma composes step 2 with the a-range arithmetic: m = a^2 b^3 ≤ hi gives
 b ≤ cbrt hi (so b is visited) and a in the generated window. Kb sufficiency
 (every candidate b is visited) is part of the same arithmetic. Acceptance:
 `m ∈ oddPowerfulRange lo hi kb` derived abstractly for every odd powerful m
-in [lo, hi]. Effort: 1-2 days.
+in [lo, hi].
 
 ## Step 4 — sortedness and the adjacency argument (checker soundness, part 2)
 
@@ -85,7 +84,7 @@ The adjacency argument needs the all-odd fact: the only value that could
 separate m from m+2 in a sorted list is m+1, which is even and hence absent.
 Proved once, parametrically; the 320 chunk theorems instantiate it for free.
 Acceptance: the implication compiles with no per-chunk work beyond the
-already-running decide. Effort: 1-2 days.
+already-running decide.
 
 ## Step 5 — tiling and stitching
 
@@ -97,7 +96,7 @@ already-running decide. Effort: 1-2 days.
 With the 2-overlap, a pair near a boundary is caught by the left chunk.
 Composing over the tiling: the union of the 320 expected lists contains
 every odd powerful pair in [1, X]. Acceptance: one assembly lemma quantifying
-over the literal boundary table. Effort: half a day.
+over the literal boundary table.
 
 ## Step 6 — middle kills
 
@@ -106,7 +105,7 @@ over the literal boundary table. Effort: half a day.
 At 10^12 the union of expected lists is 5 pairs (25, 70225, 130576327,
 189750625, 512706121225); witnesses for the middles: p = 2, 2, 29, 2, 2.
 Five two-line instances; divisibility and primality by decide/norm_num.
-Acceptance: ¬ Powerful (m+1) for all five. Effort: hours.
+Acceptance: ¬ Powerful (m+1) for all five.
 
 ## Step 7 — assembly of the headline theorem
 
@@ -118,7 +117,7 @@ Erdos364/C12/Chunk_*.lean (~1.4 MB source total, far under budget) and the
 assembly imports them. The overnight run validates content and timing; the
 library build re-checks everything once more as a natural consequence of
 compilation, after which oleans cache it. Acceptance: the headline theorem
-compiles sorry-free. Effort: 1 day plus one more overnight-scale compile.
+compiles sorry-free.
 
 ## Step 8 — axiom gate and CI
 
@@ -127,25 +126,18 @@ AxiomCheck.lean (curated manifest: headline theorem + every lemma above,
 library), gated by scripts/axiom_gate.sh adapted from centurion, run in
 GitHub Actions. Gate: axioms ⊆ {propext, Classical.choice, Quot.sound},
 zero sorryAx, zero _native. The spike theorems already measure at [propext]
-alone. Acceptance: gate PASS locally and in CI. Effort: half a day.
+alone. Acceptance: gate PASS locally and in CI.
 
 ## Step 9 — bridge and README
 
 Bridge file states the headline in the upstream namespace and vocabulary,
 byte-identical Powerful, upstream commit hash in the header, and derives the
 bounded statement in exactly the shape of erdos_364 restricted to n + 2 ≤ X.
-README finalizes the two-tier claim with the full citation ledger from the
-Phase 0 memo (Johnson 10^22, conditional A076445 7.38e28, Alekseyev ~8.1e66,
+README finalizes the two-tier claim with the full citation ledger (Johnson 10^22, conditional A076445 7.38e28, Alekseyev ~8.1e66,
 Chan, She, Beckon, Sentance, Mollin-Walsh). Acceptance: a reader can check
 the claim, its scope, and every provenance line without leaving the README.
-Effort: half a day.
 
-## Step 10 — publication
-
-Repo public. Optional: erdosproblems.com comment and formal-conjectures
-upstream contribution of the bounded result.
-
-## Step 11 — optimization arc for 10^13 / 10^14 (optional stretch)
+## Step 10 — optimization arc for 10^13 / 10^14 (optional stretch)
 
 Profile the top-end chunk blowup (cost tracks value magnitude, not entry
 count; prime suspects are the per-b isqrt binary searches on big literals
@@ -154,12 +146,6 @@ table (removes 4,056 sqfree recomputations per chunk), baked per-b skip
 hints with a tolerant checker (removes the (lo-1)/b^3 isqrt), narrower
 chunks at the top end (bounds memory), parallel CI fan-out. Re-price
 10^13/10^14 after measuring; certify only what the curve honestly supports.
-## Schedule estimate (working days from overnight-run success)
-
-Steps 1+6 in parallel with 2: days 1-2. Steps 3-4: days 2-4. Steps 5+7:
-day 5, second certificate compile that night. Steps 8-9: day 6. Buffer and
-review: day 7. 10^12 rung inside ~a week; step 11 afterwards
-for the stretch rungs.
 
 ## Risk register
 
